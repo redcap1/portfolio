@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cut Room Portfolio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;800&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: full-screen slides that snap one per scroll. Hero reel (ambient glow) → one slide per long-form work → shorts → stills → contact. Big section titles instead of rules. */
+:root{
+  --bg:#f7f7f6; --fg:#111213; --muted:#6b6e73; --line:#e1e2e3; --frame:#1a1c1f; --accent:#e5452f; --scrim:rgba(10,11,12,.55);
+  --amb:.45;
+  --display:"Archivo","IBM Plex Sans Thai",system-ui,sans-serif;
+  --body:"IBM Plex Sans Thai",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --top:84px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0f10;--fg:#ededec;--muted:#8d9096;--line:#25272a;--frame:#1c1e21;--accent:#ff6a52;--amb:.6;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e0f10;--fg:#ededec;--muted:#8d9096;--line:#25272a;--frame:#1c1e21;--accent:#ff6a52;--amb:.6;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.6;overflow:hidden}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.meta{font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--muted);font-variant-numeric:tabular-nums}
+h1,h2,h3{margin:0;text-wrap:balance}
+
+/* one screen, content swaps in place */
+.deck{position:fixed;inset:0;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:28px;overflow-y:auto;overflow-x:hidden;
+  padding-inline:max(20px,4vw);padding-block:var(--top) 108px;
+  opacity:0;visibility:hidden;transform:translateX(48px);transition:opacity .45s ease,transform .5s cubic-bezier(.2,.7,.2,1),visibility 0s .5s}
+.slide.prev{transform:translateX(-48px)}
+.slide.cur{opacity:1;visibility:visible;transform:none;transition:opacity .45s ease,transform .5s cubic-bezier(.2,.7,.2,1),visibility 0s}
+
+/* bottom bar: always-visible labelled menu */
+.bar-nav{position:fixed;inset:auto 0 0 0;z-index:5;display:flex;align-items:center;justify-content:center;gap:10px;
+  padding-inline:max(20px,4vw);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 16px);pointer-events:none}
+.bar-nav > *{pointer-events:auto}
+/* menu reads like the player's highlight dots: one segment per page, label under it */
+.bar-nav{background:linear-gradient(transparent,var(--bg) 45%);padding-top:28px}
+.tabs{display:flex;gap:14px;flex:1;max-width:1180px;overflow-x:auto;scrollbar-width:none}
+.tabs button{font:inherit;flex:1;min-width:max-content;display:grid;gap:8px;justify-items:start;padding:0;border:0;background:transparent;color:var(--muted);cursor:pointer;text-align:left}
+.tabs button::before{content:"";width:100%;height:3px;border-radius:2px;background:var(--line);transition:background .25s}
+.tabs button .n{font-family:var(--mono);font-size:11px;letter-spacing:.06em}
+.tabs button .l{font-family:var(--display);font-weight:800;font-size:16px;letter-spacing:-.01em;line-height:1.1;margin-top:-4px}
+.tabs button:hover{color:var(--fg)}
+.tabs button:hover::before{background:var(--muted)}
+.tabs button[aria-current="true"]{color:var(--fg)}
+.tabs button[aria-current="true"]::before{background:var(--fg)}
+.arrow{font:inherit;font-size:20px;width:44px;height:44px;flex:none;border-radius:50%;border:1.5px solid var(--fg);background:transparent;color:var(--fg);cursor:pointer;transition:background .2s,color .2s}
+.arrow:hover:not(:disabled){background:var(--fg);color:var(--bg)}
+.arrow:disabled{opacity:.2;cursor:default}
+.inner{width:100%;max-width:1180px;margin:0 auto;display:grid;gap:28px}
+.title{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.title h2{font-family:var(--display);font-weight:800;font-size:clamp(44px,8vw,112px);line-height:.92;letter-spacing:-.035em}
+.title .meta{font-size:13px}
+
+/* fixed header */
+header{position:fixed;inset:0 0 auto 0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:16px;
+  padding-inline:max(20px,4vw);padding-top:calc(env(safe-area-inset-top,0px) + 14px);pointer-events:none}
+header > *{pointer-events:auto}
+.name{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:-.01em}
+.me{position:relative;display:flex;align-items:center;gap:14px}
+.who{display:grid;text-align:right;line-height:1.3}
+.avatar{width:52px;height:52px;border-radius:50%;padding:0;border:2px solid var(--fg);background:var(--frame);color:#fff;overflow:hidden;cursor:zoom-in;display:grid;place-items:center;font:inherit;font-size:13px;transition:transform .25s}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.avatar:hover,.avatar[aria-expanded="true"]{transform:scale(1.08)}
+.resume{position:absolute;right:0;top:calc(100% + 12px);width:min(440px,calc(100vw - 40px));max-height:80vh;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px;box-shadow:0 24px 70px rgba(0,0,0,.3);z-index:20;transform-origin:top right;animation:pop .22s ease-out}
+.resume img{display:block;width:100%;height:auto}
+.resume-ph{aspect-ratio:1/1.414;display:grid;place-content:center;gap:8px;text-align:center;padding:24px;color:var(--muted)}
+.resume-ph b{font-family:var(--display);font-size:28px;color:var(--fg)}
+@keyframes pop{from{opacity:0;transform:scale(.92)}}
+
+
+/* player */
+.player{position:relative;display:block;width:100%;aspect-ratio:16/9;background:var(--frame);overflow:hidden;border-radius:4px;isolation:isolate}
+.player img,.player video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.player video{opacity:0;transition:opacity .35s}
+.player.on video{opacity:1}
+.player .bar{position:absolute;inset:auto 0 0 0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:linear-gradient(transparent,rgba(0,0,0,.6));color:#fff;flex-wrap:wrap}
+.player .info{font-family:var(--mono);font-size:12px;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.dots{display:flex;gap:4px;margin-top:6px}
+.dots i{width:16px;height:3px;border-radius:2px;background:rgba(255,255,255,.35)}
+.dots i.cur{background:#fff}
+.ctrls{display:flex;gap:8px}
+.pbtn{font:inherit;font-size:13px;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 14px;cursor:pointer;backdrop-filter:blur(6px)}
+.pbtn:hover{background:rgba(255,255,255,.28)}
+.pbtn.full{background:#fff;color:#111;border-color:#fff}
+
+/* hero */
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,64px);line-height:1.02;letter-spacing:-.025em;max-width:18ch}
+.stage{position:relative;width:min(100%,calc((100dvh - 390px)*16/9));min-width:min(100%,320px)}
+.stage canvas{position:absolute;inset:-8% -6%;width:112%;height:116%;filter:blur(70px) saturate(1.5);opacity:var(--amb);z-index:0;pointer-events:none}
+.stage .player{z-index:1}
+.hero-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
+
+/* long-form slide */
+.lf{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:32px;align-items:end}
+.lf .pwrap{width:min(100%,calc((100dvh - 360px)*16/9))}
+.lf h3{font-size:clamp(22px,2.4vw,30px);font-weight:600;line-height:1.25;margin:4px 0 6px}
+.lf p{margin:10px 0 0;color:var(--muted);font-size:15px;max-width:40ch}
+.roles{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.roles span{font-family:var(--mono);font-size:11px;border:1px solid var(--line);padding:2px 8px;border-radius:999px}
+
+/* shorts */
+.shorts-empty{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;width:min(100%,calc((100dvh - 380px)*2.6))}
+.shorts-empty div{aspect-ratio:9/16;border:1px dashed var(--line);border-radius:2px;display:grid;place-items:center;color:var(--muted);font-family:var(--mono);font-size:11px}
+.shorts-note{margin:0;font-size:14px;color:var(--muted)}
+
+/* stills */
+.stills{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;width:min(100%,calc((100dvh - 390px)*1.7))}
+.st{grid-column:span 2;display:grid;gap:6px;margin:0;min-width:0}
+.st.wide{grid-column:span 4}
+.st .frame{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--frame);border-radius:2px}
+.st img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+figcaption{font-size:13px;color:var(--muted)}
+
+/* contact */
+.end{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:end}
+.end p{margin:0;max-width:46ch;font-size:18px}
+.clients{margin-top:18px;color:var(--muted);font-size:14px}
+.big{font-family:var(--display);font-weight:800;font-size:clamp(26px,4.2vw,44px);letter-spacing:-.02em;word-break:break-all;user-select:all}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.btn{font:inherit;font-size:14px;padding:8px 16px;border:1px solid var(--fg);background:transparent;color:var(--fg);border-radius:999px;cursor:pointer}
+.btn:hover{background:var(--fg);color:var(--bg)}
+.btn.solid{background:var(--fg);color:var(--bg)}
+.links{display:flex;gap:18px;flex-wrap:wrap;margin-top:22px;font-size:14px}
+.links a{border-bottom:1px solid var(--line)} .links a:hover{border-color:var(--fg)}
+.foot{position:absolute;left:max(20px,4vw);right:max(20px,4vw);bottom:16px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+
+/* confirm panel */
+.modal{position:fixed;inset:0;background:var(--scrim);display:grid;place-items:center;padding:20px;z-index:10}
+.card{background:var(--bg);color:var(--fg);border-radius:10px;max-width:420px;width:100%;padding:26px;display:grid;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.card h3{font-size:20px;font-weight:600}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.modal:has(.theater:not([hidden])){background:rgba(0,0,0,.92)}
+.theater{width:min(100%,calc((100dvh - 120px)*16/9));display:grid;gap:12px}
+.tv{position:relative;aspect-ratio:16/9;background:#000;border-radius:6px;overflow:hidden}
+.tv iframe,.tv video{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+@media (max-width:780px){
+  :root{--top:92px}
+  .slide{justify-content:flex-start}
+  .lf,.end{grid-template-columns:1fr;gap:20px}
+  .stage,.lf .pwrap,.stills,.shorts-empty{width:100%}
+  .stills{grid-template-columns:1fr 1fr}
+  .st,.st.wide{grid-column:span 2}
+  .shorts-empty{grid-template-columns:repeat(3,1fr)}
+  .shorts-empty div:nth-child(n+4){display:none}
+  .stage canvas{filter:blur(40px) saturate(1.5)}
+  .who .meta{display:none}
+  .tabs{gap:10px}
+  .tabs button .l{font-size:14px}
+  .foot{position:static;margin-top:20px}
+  .arrow{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.deck{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="meta">Video Editor Portfolio</span>
+  <div class="me">
+    <span class="who"><span class="name">ชื่อของคุณ</span><span class="meta">ชี้ที่รูปเพื่อดู Resume</span></span>
+    <button class="avatar" id="avatar" type="button" aria-expanded="false" aria-controls="resume" aria-label="ดู Resume">
+      <!-- แทนด้วย <img src="me.jpg" alt=""> ที่ครอปจากรูปใน resume -->
+      <span>ชื่อ</span>
+    </button>
+    <div class="resume" id="resume" hidden>
+      <!-- แทนด้วย <img src="resume.jpg" alt="Resume"> -->
+      <div class="resume-ph"><b>Resume</b><span>ส่งไฟล์ resume (PDF หรือรูป) มาแล้วจะใส่ตรงนี้</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="bar-nav" aria-label="เมนู"><button class="arrow" id="prevBtn" type="button" aria-label="ก่อนหน้า">←</button><div class="tabs" id="tabs"></div><button class="arrow" id="nextBtn" type="button" aria-label="ถัดไป">→</button></nav>
+
+<main class="deck" id="deck">
+  <section class="slide hero" id="s-home" data-name="หน้าแรก" data-tab="หน้าแรก">
+    <div class="inner">
+      <h1>ตัดต่อ Vlog และคลิปเกม ให้ดูจนจบ</h1>
+      <div class="stage"><canvas id="amb" width="64" height="36" aria-hidden="true"></canvas><div id="heroPlayer"></div></div>
+      <div class="hero-foot meta"><span>Video Editor — Bangkok</span><span>Vlog · Gaming · Sponsor Integration</span></div>
+    </div>
+  </section>
+
+  <!-- long-form slides are inserted here by script -->
+  <div id="longSlides" style="display:contents"></div>
+
+  <section class="slide" id="s-short" data-name="Short-form" data-tab="Short-form">
+    <div class="inner">
+      <div class="title"><h2>Short-form</h2><span class="meta">9:16 · Reels / TikTok / Shorts</span></div>
+      <div class="shorts-empty" aria-hidden="true"><div>9:16</div><div>9:16</div><div>9:16</div><div>9:16</div><div>9:16</div></div>
+      <p class="shorts-note">ยังไม่มีคลิปแนวตั้งในโฟลเดอร์งาน ช่องนี้รอใส่คลิปสั้น</p>
+    </div>
+  </section>
+
+  <section class="slide" id="s-stills" data-name="Stills" data-tab="Stills">
+    <div class="inner">
+      <div class="title"><h2>Stills</h2><span class="meta">เฟรมจาก Vlog Korea</span></div>
+      <div class="stills" id="stillList"></div>
+    </div>
+  </section>
+
+  <section class="slide" id="s-contact" data-name="ติดต่อ" data-tab="ติดต่อ">
+    <div class="inner">
+      <div class="title"><h2>Contact</h2><span class="meta">รับงานใหม่</span></div>
+      <div class="end">
+        <div>
+          <p>ตัดต่อ Vlog ท่องเที่ยวและคลิปเกมแบบยาว ทำซับไตเติล กราฟิก และวางโฆษณาสปอนเซอร์ให้เนียนไปกับเนื้อหา ใช้ Premiere Pro และ DaVinci Resolve</p>
+          <div class="clients">ร่วมงานกับ — VOICEZAN</div>
+        </div>
+        <div>
+          <div class="big" id="mail">hello@yourname.com</div>
+          <div class="row"><button class="btn" id="copy" type="button">คัดลอกอีเมล</button><span class="meta">LINE @yourname</span></div>
+          <div class="links"><a href="https://www.youtube.com/results?search_query=voicezan" target="_blank" rel="noopener">YouTube</a><a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot meta"><span>© 2026 ชื่อของคุณ</span><button class="btn" type="button" onclick="goTo(0)">กลับหน้าแรก</button></div>
+  </section>
+</main>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="card">
+    <span class="meta" id="mMeta"></span>
+    <h3 id="mTitle"></h3>
+    <p id="mNote"></p>
+    <div class="row" style="margin:0"><button class="btn solid" id="mGo" type="button">ดูคลิปเต็ม</button><button class="btn" id="mClose" type="button">ดูไฮไลท์ต่อ</button></div>
+  </div>
+  <div class="theater" id="theater" hidden>
+    <div class="tv" id="tv"></div>
+    <div class="row" style="margin:0;justify-content:space-between"><span class="meta" id="tvTitle" style="color:#ddd"></span><button class="btn solid" id="tvClose" type="button">ปิด ✕</button></div>
+  </div>
+</div>
+
+<script>
+// ===== แก้ข้อมูลตรงนี้ — yt = รหัสคลิป YouTube (ตัวอักษรหลัง watch?v=), file = ไฟล์คลิปเต็มในโฟลเดอร์ (สำหรับเปิดแบบไม่มีเน็ต), url = ลิงก์สำรอง =====
+const YT_FALLBACK="https://www.youtube.com/results?search_query=voicezan";
+const LONG=[
+ {tab:"Vlog เกาหลี",t:"Vlog เกาหลี — เต็มทริป",type:"Travel Vlog · VOICEZAN",len:"1:28:23",year:2026,roles:["Edit","Subtitle","Music","Color"],
+  d:"เรียงฟุตเทจทั้งทริปจากกล้อง DJI หลายตัวให้เป็นเรื่องเดียว ตั้งแต่ร้านอาหาร ตลาด ไปจนถึงงานอีสปอร์ต",
+  poster:"vlog-poster.jpg",clips:["vh1","vh2","vh3","vh4","vh5","vh6","vh7"],yt:"",file:"",url:""},
+ {tab:"Valorant",t:"จัด Tier List สกิน Valorant",type:"Gaming · VOICEZAN",len:"22:35",year:2026,roles:["Edit","Facecam","Sponsor Ad","Graphics"],
+  d:"คลิปเกมยาวพร้อมหน้ากล้อง จังหวะตัดตามรีแอ็กชัน และวางช่วงโฆษณาสปอนเซอร์ไว้กลางคลิป",
+  poster:"game-poster.jpg",clips:["gh1","gh2","gh3","gh4","gh5"],yt:"",file:"",url:""},
+];
+const STILLS=[
+ {t:"ตลาดในโซล",src:"st-market.jpg",wide:true},
+ {t:"หลังเวทีงานอีสปอร์ต",src:"st-booth.jpg"},
+ {t:"ระหว่างรอเข้างาน",src:"st-sky.jpg"},
+ {t:"ในสนามแข่ง",src:"st-stage.jpg"},
+ {t:"อาหารเช้าที่โรงแรม",src:"st-breakfast.jpg"},
+];
+// =========================================
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const touch=matchMedia("(hover: none)").matches;
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const players=[];
+const deck=document.getElementById("deck");
+
+// confirm panel, then the full video plays in-page:
+// YouTube embed when online (w.yt = video id) → local file (w.file, for the offline folder) → new tab (w.url) as last resort
+const modal=document.getElementById("modal"),card=modal.querySelector(".card"),theater=document.getElementById("theater"),tv=document.getElementById("tv");
+let lastFocus=null,resumeAfter=null,curWork=null;
+const fullSource=w=>w.yt&&navigator.onLine?"yt":w.file?"file":"link";
+function askFull(w,p){
+  lastFocus=document.activeElement;curWork=w;
+  document.getElementById("mTitle").textContent=w.t;
+  document.getElementById("mMeta").textContent=`${w.type} · ยาว ${w.len}`;
+  document.getElementById("mNote").textContent=fullSource(w)==="link"?"คลิปเต็มจะเปิดบน YouTube ในแท็บใหม่":"คลิปเต็มเล่นในหน้านี้ ปิดแล้วกลับมาดูไฮไลท์ต่อได้";
+  players.forEach(x=>x.pause());resumeAfter=p;
+  card.hidden=false;theater.hidden=true;modal.hidden=false;document.getElementById("mGo").focus();
+}
+function playFull(){
+  const w=curWork,src=fullSource(w);
+  if(src==="link"){window.open(w.url||YT_FALLBACK,"_blank","noopener");closeModal();return}
+  tv.innerHTML=src==="yt"
+    ?`<iframe src="https://www.youtube-nocookie.com/embed/${w.yt}?autoplay=1&rel=0&modestbranding=1" title="${w.t}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`
+    :`<video src="${w.file}" poster="${w.poster}" controls autoplay playsinline></video>`;
+  document.getElementById("tvTitle").textContent=`${w.t} · ${w.len}`;
+  card.hidden=true;theater.hidden=false;document.getElementById("tvClose").focus();
+}
+function closeModal(){tv.innerHTML="";modal.hidden=true;if(resumeAfter&&resumeAfter.wanted)resumeAfter.play();lastFocus&&lastFocus.focus()}
+document.getElementById("mClose").onclick=closeModal;
+document.getElementById("tvClose").onclick=closeModal;
+document.getElementById("mGo").onclick=playFull;
+modal.addEventListener("click",e=>{if(e.target===modal)closeModal()});
+
+// highlight player: plays the work's clips in a random order, never the full video
+function makePlayer(host,w){
+  const order=shuffle(w.clips);let i=0;
+  host.className="player";
+  host.innerHTML=`<img src="${w.poster}" alt=""><video muted playsinline preload="none"></video>
+   <div class="bar"><div class="info"><span class="lbl"></span><div class="dots">${order.map(()=>"<i></i>").join("")}</div></div>
+   <div class="ctrls"><button class="pbtn snd" type="button" aria-pressed="false">เปิดเสียง</button><button class="pbtn full" type="button">ดูคลิปเต็ม</button></div></div>`;
+  const v=host.querySelector("video"),lbl=host.querySelector(".lbl"),dots=host.querySelectorAll(".dots i"),snd=host.querySelector(".snd");
+  const p={v,wanted:false,
+    load(){v.src=order[i]+".mp4";lbl.textContent=`ไฮไลท์ ${i+1}/${order.length} · คลิปเต็ม ${w.len}`;dots.forEach((d,k)=>d.classList.toggle("cur",k===i))},
+    play(){if(reduce)return;p.wanted=true;v.play().then(()=>host.classList.add("on")).catch(()=>{})},
+    pause(){v.pause()},
+    stop(){p.wanted=false;v.pause()}};
+  v.addEventListener("ended",()=>{i=(i+1)%order.length;p.load();if(p.wanted)v.play().catch(()=>{})});
+  snd.onclick=()=>{v.muted=!v.muted;snd.textContent=v.muted?"เปิดเสียง":"ปิดเสียง";snd.setAttribute("aria-pressed",String(!v.muted));if(!v.muted)p.play()};
+  host.querySelector(".full").onclick=()=>askFull(w,p);
+  p.load();players.push(p);
+  return p;
+}
+
+// hero + ambient glow (current frame drawn small, blurred by CSS)
+const hero=makePlayer(document.getElementById("heroPlayer"),LONG[0]);
+hero.v.preload="auto";
+const amb=document.getElementById("amb"),ctx=amb.getContext("2d");
+(function glow(){
+  if(hero.v.readyState>=2){try{ctx.drawImage(hero.v,0,0,amb.width,amb.height)}catch(e){}}
+  else{const im=document.querySelector("#heroPlayer img");if(im.complete&&im.naturalWidth)ctx.drawImage(im,0,0,amb.width,amb.height)}
+  if(!reduce)requestAnimationFrame(glow);
+})();
+
+// one slide per long-form work
+const slot=document.getElementById("longSlides");
+const slidePlayers=new Map([[document.getElementById("s-home"),hero]]);
+LONG.forEach((w,k)=>{
+  const s=document.createElement("section");s.className="slide";s.id="s-long-"+(k+1);s.dataset.name=w.t;
+  s.dataset.tab=w.tab;
+  s.innerHTML=`<div class="inner"><div class="title"><h2>Long-form</h2><span class="meta">${k+1} / ${LONG.length}</span></div>
+   <div class="lf"><div class="pwrap"><div></div></div><div><span class="meta">${w.type} · ${w.year}</span><h3>${w.t}</h3><p>${w.d}</p>
+   <div class="roles">${w.roles.map(r=>`<span>${r}</span>`).join("")}</div></div></div></div>`;
+  slot.appendChild(s);
+  slidePlayers.set(s,makePlayer(s.querySelector(".pwrap > div"),w));
+});
+
+document.getElementById("stillList").innerHTML=STILLS.map(w=>`
+ <figure class="st${w.wide?" wide":""}"><div class="frame"><img src="${w.src}" alt="${w.t}" loading="lazy"></div><figcaption>${w.t}</figcaption></figure>`).join("");
+
+// one screen: only the current slide is shown; menu, arrows, keys, wheel and swipe swap it
+const slides=[...document.querySelectorAll(".slide")];
+const tabs=document.getElementById("tabs"),prevBtn=document.getElementById("prevBtn"),nextBtn=document.getElementById("nextBtn");
+tabs.innerHTML=slides.map((s,k)=>`<button type="button" data-k="${k}"><span class="n">${String(k+1).padStart(2,"0")}</span><span class="l">${s.dataset.tab}</span></button>`).join("");
+let cur=-1,lock=false;
+function goTo(n){
+  n=Math.max(0,Math.min(slides.length-1,n));if(n===cur)return;
+  slides.forEach((s,k)=>{s.classList.toggle("cur",k===n);s.classList.toggle("prev",k<n);s.setAttribute("aria-hidden",String(k!==n));s.inert=k!==n});
+  slidePlayers.forEach((p,s)=>s===slides[n]?(modal.hidden&&p.play()):p.stop());
+  [...tabs.children].forEach((b,k)=>b.setAttribute("aria-current",String(k===n)));
+  tabs.children[n].scrollIntoView({block:"nearest",inline:"center"});
+  prevBtn.disabled=n===0;nextBtn.disabled=n===slides.length-1;
+  slides[n].scrollTop=0;cur=n;
+  try{history.replaceState(null,"","#"+slides[n].id)}catch(e){}
+}
+tabs.addEventListener("click",e=>{const b=e.target.closest("button");if(b)goTo(+b.dataset.k)});
+prevBtn.onclick=()=>goTo(cur-1);nextBtn.onclick=()=>goTo(cur+1);
+const step=d=>{if(lock)return;lock=true;goTo(cur+d);setTimeout(()=>lock=false,700)};
+// wheel: one notch = one slide, unless the slide itself still has room to scroll (small screens)
+deck.addEventListener("wheel",e=>{
+  if(!modal.hidden||Math.abs(e.deltaY)<Math.abs(e.deltaX)&&Math.abs(e.deltaX)<20)return;
+  const s=slides[cur],d=(Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY)>0?1:-1;
+  const canScroll=d>0?s.scrollTop+s.clientHeight<s.scrollHeight-2:s.scrollTop>0;
+  if(canScroll&&Math.abs(e.deltaX)<=Math.abs(e.deltaY))return;
+  e.preventDefault();step(d);
+},{passive:false});
+// swipe left/right on touch screens
+let sx=0,sy=0;
+deck.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+deck.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)step(dx<0?1:-1)},{passive:true});
+addEventListener("keydown",e=>{
+  if(e.key==="Escape"){if(!modal.hidden)closeModal();showRs(false);return}
+  if(!modal.hidden||e.target.closest("input,textarea"))return;
+  const d={ArrowRight:1,ArrowDown:1,PageDown:1,ArrowLeft:-1,ArrowUp:-1,PageUp:-1}[e.key];if(!d)return;
+  e.preventDefault();step(d);
+});
+const start=slides.findIndex(s=>"#"+s.id===location.hash);
+goTo(start<0?0:start);
+
+// resume: hover the face (desktop) or tap it (touch); tapping elsewhere closes
+const av=document.getElementById("avatar"),rs=document.getElementById("resume"),me=av.parentElement;
+function showRs(o){rs.hidden=!o;av.setAttribute("aria-expanded",String(o))}
+if(!touch){me.addEventListener("mouseenter",()=>showRs(true));me.addEventListener("mouseleave",()=>showRs(false))}
+av.addEventListener("click",e=>{e.stopPropagation();showRs(rs.hidden)});
+document.addEventListener("click",e=>{if(!me.contains(e.target))showRs(false)});
+
+document.getElementById("copy").addEventListener("click",async e=>{
+  const el=document.getElementById("mail");
+  try{await navigator.clipboard.writeText(el.textContent);e.target.textContent="คัดลอกแล้ว"}
+  catch(err){const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);e.target.textContent="กด Ctrl+C เพื่อคัดลอก"}
+});
+</script>
+</body>
+</html>
