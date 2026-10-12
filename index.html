@@ -350,10 +350,12 @@ function goTo(n){
   [...tabs.children].forEach((b,k)=>b.setAttribute("aria-current",String(k===n)));
   tabs.children[n].scrollIntoView({block:"nearest",inline:"center"});
   prevBtn.disabled=n===0;nextBtn.disabled=n===slides.length-1;
-  slides[n].scrollTop=0;cur=n;
+  slides[n].scrollTop=0;deck.scrollLeft=0;deck.scrollTop=0;cur=n;
   try{history.replaceState(null,"","#"+slides[n].id)}catch(e){}
 }
 tabs.addEventListener("click",e=>{const b=e.target.closest("button");if(b)goTo(+b.dataset.k)});
+// the deck never scrolls itself (anchor jumps would shift the whole screen sideways)
+deck.addEventListener("scroll",()=>{deck.scrollLeft=0;deck.scrollTop=0});
 prevBtn.onclick=()=>goTo(cur-1);nextBtn.onclick=()=>goTo(cur+1);
 const step=d=>{if(lock)return;lock=true;goTo(cur+d);setTimeout(()=>lock=false,700)};
 // wheel: one notch = one slide, unless the slide itself still has room to scroll (small screens)
