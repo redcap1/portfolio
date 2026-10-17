@@ -202,7 +202,7 @@ figcaption{font-size:13px;color:var(--muted)}
 
   <section class="slide" id="s-stills" data-name="Stills" data-tab="Stills">
     <div class="inner">
-      <div class="title"><h2>Stills</h2><span class="meta">เฟรมจาก Vlog Korea</span></div>
+      <div class="title"><h2>Stills</h2><span class="meta">เฟรมจาก Vlog เกาหลี</span></div>
       <div class="stills" id="stillList"></div>
     </div>
   </section>
@@ -243,19 +243,22 @@ figcaption{font-size:13px;color:var(--muted)}
 // ===== แก้ข้อมูลตรงนี้ — yt = รหัสคลิป YouTube (ตัวอักษรหลัง watch?v=), file = ไฟล์คลิปเต็มในโฟลเดอร์ (สำหรับเปิดแบบไม่มีเน็ต), url = ลิงก์สำรอง =====
 const YT_FALLBACK="https://www.youtube.com/results?search_query=voicezan";
 const LONG=[
- {tab:"Vlog เกาหลี",t:"Vlog เกาหลี — เต็มทริป",type:"Travel Vlog · VOICEZAN",len:"1:28:23",year:2026,roles:["Edit","Subtitle","Music","Color"],
-  d:"เรียงฟุตเทจทั้งทริปจากกล้อง DJI หลายตัวให้เป็นเรื่องเดียว ตั้งแต่ร้านอาหาร ตลาด ไปจนถึงงานอีสปอร์ต",
-  poster:"vlog-poster.jpg",clips:["vh1","vh2","vh3","vh4","vh5","vh6","vh7"],yt:"",file:"",url:""},
- {tab:"Valorant",t:"จัด Tier List สกิน Valorant",type:"Gaming · VOICEZAN",len:"22:35",year:2026,roles:["Edit","Facecam","Sponsor Ad","Graphics"],
-  d:"คลิปเกมยาวพร้อมหน้ากล้อง จังหวะตัดตามรีแอ็กชัน และวางช่วงโฆษณาสปอนเซอร์ไว้กลางคลิป",
-  poster:"game-poster.jpg",clips:["gh1","gh2","gh3","gh4","gh5"],yt:"",file:"",url:""},
+ {tab:"Vlog ปูซาน",t:"Vlog เกาหลี EP1 — ปูซาน",type:"Travel Vlog · VOICEZAN",len:"30:41",year:2026,roles:["Edit","Subtitle","Music","Color"],
+  d:"ทริปปูซานตั้งแต่มื้อแรก วิวเมือง งาน Pacific Finals จนถึงชายหาดตอนกลางคืน เรียงจากฟุตเทจกล้อง DJI หลายตัวให้เป็นเรื่องเดียว",
+  poster:"busan-poster.jpg",clips:["bh1","bh2","bh3","bh4","bh5","bh6"],yt:"",file:"",url:""},
+ {tab:"Valorant",t:"Valorant — เกมเต็มพร้อมหน้ากล้อง",type:"Gaming · VOICEZAN",len:"11:13",year:2026,roles:["Edit","Facecam","Captions","Zoom Cuts"],
+  d:"ตัดเกมทั้งแมตช์ให้กระชับ ใส่ซับคำพูดเด่น ซูมหน้ากล้องตอนรีแอ็ก และขึ้นกราฟิกโดเนทระหว่างเกม",
+  poster:"match-poster.jpg",clips:["mh1","mh2","mh3","mh4","mh5","mh6"],yt:"",file:"",url:""},
+ {tab:"Tier List",t:"จัด Tier List สกิน Valorant",type:"Gaming · VOICEZAN",len:"22:35",year:2026,roles:["Edit","Facecam","Sponsor Ad","Graphics"],
+  d:"คลิปพูดคุยยาวพร้อมหน้ากล้อง จังหวะตัดตามรีแอ็กชัน และวางช่วงโฆษณาสปอนเซอร์ไว้กลางคลิป",
+  poster:"tier-poster.jpg",clips:["th1","th2","th3","th4","th5"],yt:"",file:"",url:""},
 ];
 const STILLS=[
- {t:"ตลาดในโซล",src:"st-market.jpg",wide:true},
+ {t:"งาน Pacific Finals ที่ปูซาน",src:"st-pacific.jpg",wide:true},
+ {t:"ชายหาดตอนกลางคืน",src:"st-beach.jpg"},
+ {t:"ตลาดในโซล",src:"st-market.jpg"},
  {t:"หลังเวทีงานอีสปอร์ต",src:"st-booth.jpg"},
- {t:"ระหว่างรอเข้างาน",src:"st-sky.jpg"},
- {t:"ในสนามแข่ง",src:"st-stage.jpg"},
- {t:"อาหารเช้าที่โรงแรม",src:"st-breakfast.jpg"},
+ {t:"มื้อแรกที่ปูซาน",src:"st-soup.jpg"},
 ];
 // =========================================
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
