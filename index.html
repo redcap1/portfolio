@@ -159,6 +159,13 @@ figcaption{font-size:13px;color:var(--muted)}
   .arrow{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.deck{scroll-behavior:auto}}
+/* short-form clips */
+.shorts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;width:min(100%,calc((100dvh - 380px)*2.6))}
+.sf{display:grid;gap:8px;min-width:0}
+.sfv{position:relative;display:block;aspect-ratio:9/16;background:var(--frame);border-radius:4px;overflow:hidden}
+.sfv video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sfv .stat{position:absolute;right:8px;top:8px;color:#fff;font-family:var(--mono);font-size:11px;background:rgba(0,0,0,.45);padding:1px 6px;border-radius:3px}
+.sf > span:last-child{font-size:14px;font-weight:500}
 </style>
 </head>
 <body>
@@ -166,15 +173,9 @@ figcaption{font-size:13px;color:var(--muted)}
 <header>
   <span class="meta">Video Editor Portfolio</span>
   <div class="me">
-    <span class="who"><span class="name">ชื่อของคุณ</span><span class="meta">ชี้ที่รูปเพื่อดู Resume</span></span>
-    <button class="avatar" id="avatar" type="button" aria-expanded="false" aria-controls="resume" aria-label="ดู Resume">
-      <!-- แทนด้วย <img src="me.jpg" alt=""> ที่ครอปจากรูปใน resume -->
-      <span>ชื่อ</span>
-    </button>
-    <div class="resume" id="resume" hidden>
-      <!-- แทนด้วย <img src="resume.jpg" alt="Resume"> -->
-      <div class="resume-ph"><b>Resume</b><span>ส่งไฟล์ resume (PDF หรือรูป) มาแล้วจะใส่ตรงนี้</span></div>
-    </div>
+    <span class="who"><span class="name" id="pName"></span><span class="meta" id="pHint">ชี้ที่รูปเพื่อดู Resume</span></span>
+    <button class="avatar" id="avatar" type="button" aria-expanded="false" aria-controls="resume" aria-label="ดู Resume"></button>
+    <div class="resume" id="resume" hidden></div>
   </div>
 </header>
 
@@ -183,9 +184,9 @@ figcaption{font-size:13px;color:var(--muted)}
 <main class="deck" id="deck">
   <section class="slide hero" id="s-home" data-name="หน้าแรก" data-tab="หน้าแรก">
     <div class="inner">
-      <h1>ตัดต่อ Vlog และคลิปเกม ให้ดูจนจบ</h1>
+      <h1 id="pHeadline"></h1>
       <div class="stage"><canvas id="amb" width="64" height="36" aria-hidden="true"></canvas><div id="heroPlayer"></div></div>
-      <div class="hero-foot meta"><span>Video Editor — Bangkok</span><span>Vlog · Gaming · Sponsor Integration</span></div>
+      <div class="hero-foot meta"><span id="pHeroL"></span><span id="pHeroR"></span></div>
     </div>
   </section>
 
@@ -195,14 +196,13 @@ figcaption{font-size:13px;color:var(--muted)}
   <section class="slide" id="s-short" data-name="Short-form" data-tab="Short-form">
     <div class="inner">
       <div class="title"><h2>Short-form</h2><span class="meta">9:16 · Reels / TikTok / Shorts</span></div>
-      <div class="shorts-empty" aria-hidden="true"><div>9:16</div><div>9:16</div><div>9:16</div><div>9:16</div><div>9:16</div></div>
-      <p class="shorts-note">ยังไม่มีคลิปแนวตั้งในโฟลเดอร์งาน ช่องนี้รอใส่คลิปสั้น</p>
+      <div id="shortList"></div>
     </div>
   </section>
 
   <section class="slide" id="s-stills" data-name="Stills" data-tab="Stills">
     <div class="inner">
-      <div class="title"><h2>Stills</h2><span class="meta">เฟรมจาก Vlog เกาหลี</span></div>
+      <div class="title"><h2>Stills</h2><span class="meta" id="stillsNote"></span></div>
       <div class="stills" id="stillList"></div>
     </div>
   </section>
@@ -212,17 +212,17 @@ figcaption{font-size:13px;color:var(--muted)}
       <div class="title"><h2>Contact</h2><span class="meta">รับงานใหม่</span></div>
       <div class="end">
         <div>
-          <p>ตัดต่อ Vlog ท่องเที่ยวและคลิปเกมแบบยาว ทำซับไตเติล กราฟิก และวางโฆษณาสปอนเซอร์ให้เนียนไปกับเนื้อหา ใช้ Premiere Pro และ DaVinci Resolve</p>
-          <div class="clients">ร่วมงานกับ — VOICEZAN</div>
+          <p id="pAbout"></p>
+          <div class="clients" id="pClients"></div>
         </div>
         <div>
-          <div class="big" id="mail">hello@yourname.com</div>
-          <div class="row"><button class="btn" id="copy" type="button">คัดลอกอีเมล</button><span class="meta">LINE @yourname</span></div>
-          <div class="links"><a href="https://www.youtube.com/results?search_query=voicezan" target="_blank" rel="noopener">YouTube</a><a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a></div>
+          <div class="big" id="mail"></div>
+          <div class="row"><button class="btn" id="copy" type="button">คัดลอกอีเมล</button><span class="meta" id="pLine"></span></div>
+          <div class="links" id="pLinks"></div>
         </div>
       </div>
     </div>
-    <div class="foot meta"><span>© 2026 ชื่อของคุณ</span><button class="btn" type="button" onclick="goTo(0)">กลับหน้าแรก</button></div>
+    <div class="foot meta"><span id="pCopy"></span><button class="btn" type="button" onclick="goTo(0)">กลับหน้าแรก</button></div>
   </section>
 </main>
 
@@ -239,73 +239,71 @@ figcaption{font-size:13px;color:var(--muted)}
   </div>
 </div>
 
+<!-- all text, works, shorts and stills live in content.js — edit that file, not this one -->
+<script src="content.js"></script>
 <script>
-// ===== แก้ข้อมูลตรงนี้ — yt = รหัสคลิป YouTube (ตัวอักษรหลัง watch?v=), file = ไฟล์คลิปเต็มในโฟลเดอร์ (สำหรับเปิดแบบไม่มีเน็ต), url = ลิงก์สำรอง =====
-const YT_FALLBACK="https://www.youtube.com/results?search_query=voicezan";
-const LONG=[
- {tab:"Vlog ปูซาน",t:"Vlog เกาหลี EP1 — ปูซาน",type:"Travel Vlog · VOICEZAN",len:"30:41",year:2026,roles:["Edit","Subtitle","Music","Color"],
-  d:"ทริปปูซานตั้งแต่มื้อแรก วิวเมือง งาน Pacific Finals จนถึงชายหาดตอนกลางคืน เรียงจากฟุตเทจกล้อง DJI หลายตัวให้เป็นเรื่องเดียว",
-  poster:"busan-poster.jpg",clips:["bh1","bh2","bh3","bh4","bh5","bh6"],yt:"",file:"",url:""},
- {tab:"Valorant",t:"Valorant — เกมเต็มพร้อมหน้ากล้อง",type:"Gaming · VOICEZAN",len:"11:13",year:2026,roles:["Edit","Facecam","Captions","Zoom Cuts"],
-  d:"ตัดเกมทั้งแมตช์ให้กระชับ ใส่ซับคำพูดเด่น ซูมหน้ากล้องตอนรีแอ็ก และขึ้นกราฟิกโดเนทระหว่างเกม",
-  poster:"match-poster.jpg",clips:["mh1","mh2","mh3","mh4","mh5","mh6"],yt:"",file:"",url:""},
- {tab:"Tier List",t:"จัด Tier List สกิน Valorant",type:"Gaming · VOICEZAN",len:"22:35",year:2026,roles:["Edit","Facecam","Sponsor Ad","Graphics"],
-  d:"คลิปพูดคุยยาวพร้อมหน้ากล้อง จังหวะตัดตามรีแอ็กชัน และวางช่วงโฆษณาสปอนเซอร์ไว้กลางคลิป",
-  poster:"tier-poster.jpg",clips:["th1","th2","th3","th4","th5"],yt:"",file:"",url:""},
-];
-const STILLS=[
- {t:"งาน Pacific Finals ที่ปูซาน",src:"st-pacific.jpg",wide:true},
- {t:"ชายหาดตอนกลางคืน",src:"st-beach.jpg"},
- {t:"ตลาดในโซล",src:"st-market.jpg"},
- {t:"หลังเวทีงานอีสปอร์ต",src:"st-booth.jpg"},
- {t:"มื้อแรกที่ปูซาน",src:"st-soup.jpg"},
-];
-// =========================================
+const C=window.CONTENT||{},P=C.profile||{};
+const WORKS=C.works||[],SHORTS=C.shorts||[],STILLS=C.stills||[];
+const YT_FALLBACK=C.youtubeFallback||"https://www.youtube.com";
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const $=id=>document.getElementById(id);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const touch=matchMedia("(hover: none)").matches;
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const players=[];
-const deck=document.getElementById("deck");
+const deck=$("deck");
+
+// profile text
+document.title=(P.name?P.name+" — ":"")+"Video Editor";
+$("pName").textContent=P.nameTh||P.name||"";
+$("pHeadline").textContent=P.headline||"";
+$("pHeroL").textContent=P.heroLeft||"";$("pHeroR").textContent=P.heroRight||"";
+$("pAbout").textContent=P.about||"";$("pClients").textContent=P.clients||"";
+$("mail").textContent=P.email||"";$("pLine").textContent=P.line?"LINE "+P.line:"";
+$("pLinks").innerHTML=(P.links||[]).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join("");
+$("pCopy").textContent="© "+new Date().getFullYear()+" "+(P.name||"");
+$("stillsNote").textContent=C.stillsNote||"";
+$("avatar").innerHTML=P.photo?`<img src="${esc(P.photo)}" alt="">`:`<span>${esc((P.nameTh||P.name||"?").slice(0,3))}</span>`;
+$("resume").innerHTML=P.resume?`<img src="${esc(P.resume)}" alt="Resume">`:`<div class="resume-ph"><b>Resume</b><span>ยังไม่ได้ใส่ไฟล์ resume ใน content.js</span></div>`;
+if(!P.resume&&!P.photo)$("pHint").hidden=true;
 
 // confirm panel, then the full video plays in-page:
-// YouTube embed when online (w.yt = video id) → local file (w.file, for the offline folder) → new tab (w.url) as last resort
-const modal=document.getElementById("modal"),card=modal.querySelector(".card"),theater=document.getElementById("theater"),tv=document.getElementById("tv");
+// YouTube embed when online (yt = video id) → local file (file, for the offline folder) → new tab (url) as last resort
+const modal=$("modal"),card=modal.querySelector(".card"),theater=$("theater"),tv=$("tv");
 let lastFocus=null,resumeAfter=null,curWork=null;
 const fullSource=w=>w.yt&&navigator.onLine?"yt":w.file?"file":"link";
 function askFull(w,p){
   lastFocus=document.activeElement;curWork=w;
-  document.getElementById("mTitle").textContent=w.t;
-  document.getElementById("mMeta").textContent=`${w.type} · ยาว ${w.len}`;
-  document.getElementById("mNote").textContent=fullSource(w)==="link"?"คลิปเต็มจะเปิดบน YouTube ในแท็บใหม่":"คลิปเต็มเล่นในหน้านี้ ปิดแล้วกลับมาดูไฮไลท์ต่อได้";
+  $("mTitle").textContent=w.title;
+  $("mMeta").textContent=`${w.type} · ยาว ${w.length}`;
+  $("mNote").textContent=fullSource(w)==="link"?"คลิปเต็มจะเปิดบน YouTube ในแท็บใหม่":"คลิปเต็มเล่นในหน้านี้ ปิดแล้วกลับมาดูไฮไลท์ต่อได้";
   players.forEach(x=>x.pause());resumeAfter=p;
-  card.hidden=false;theater.hidden=true;modal.hidden=false;document.getElementById("mGo").focus();
+  card.hidden=false;theater.hidden=true;modal.hidden=false;$("mGo").focus();
 }
 function playFull(){
   const w=curWork,src=fullSource(w);
   if(src==="link"){window.open(w.url||YT_FALLBACK,"_blank","noopener");closeModal();return}
   tv.innerHTML=src==="yt"
-    ?`<iframe src="https://www.youtube-nocookie.com/embed/${w.yt}?autoplay=1&rel=0&modestbranding=1" title="${w.t}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`
-    :`<video src="${w.file}" poster="${w.poster}" controls autoplay playsinline></video>`;
-  document.getElementById("tvTitle").textContent=`${w.t} · ${w.len}`;
-  card.hidden=true;theater.hidden=false;document.getElementById("tvClose").focus();
+    ?`<iframe src="https://www.youtube-nocookie.com/embed/${esc(w.yt)}?autoplay=1&rel=0&modestbranding=1" title="${esc(w.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`
+    :`<video src="${esc(w.file)}" poster="${esc(w.poster)}" controls autoplay playsinline></video>`;
+  $("tvTitle").textContent=`${w.title} · ${w.length}`;
+  card.hidden=true;theater.hidden=false;$("tvClose").focus();
 }
 function closeModal(){tv.innerHTML="";modal.hidden=true;if(resumeAfter&&resumeAfter.wanted)resumeAfter.play();lastFocus&&lastFocus.focus()}
-document.getElementById("mClose").onclick=closeModal;
-document.getElementById("tvClose").onclick=closeModal;
-document.getElementById("mGo").onclick=playFull;
+$("mClose").onclick=closeModal;$("tvClose").onclick=closeModal;$("mGo").onclick=playFull;
 modal.addEventListener("click",e=>{if(e.target===modal)closeModal()});
 
 // highlight player: plays the work's clips in a random order, never the full video
 function makePlayer(host,w){
-  const order=shuffle(w.clips);let i=0;
+  const order=shuffle(w.clips||[]);let i=0;
   host.className="player";
-  host.innerHTML=`<img src="${w.poster}" alt=""><video muted playsinline preload="none"></video>
+  host.innerHTML=`<img src="${esc(w.poster)}" alt=""><video muted playsinline preload="none"></video>
    <div class="bar"><div class="info"><span class="lbl"></span><div class="dots">${order.map(()=>"<i></i>").join("")}</div></div>
    <div class="ctrls"><button class="pbtn snd" type="button" aria-pressed="false">เปิดเสียง</button><button class="pbtn full" type="button">ดูคลิปเต็ม</button></div></div>`;
   const v=host.querySelector("video"),lbl=host.querySelector(".lbl"),dots=host.querySelectorAll(".dots i"),snd=host.querySelector(".snd");
   const p={v,wanted:false,
-    load(){v.src=order[i]+".mp4";lbl.textContent=`ไฮไลท์ ${i+1}/${order.length} · คลิปเต็ม ${w.len}`;dots.forEach((d,k)=>d.classList.toggle("cur",k===i))},
-    play(){if(reduce)return;p.wanted=true;v.play().then(()=>host.classList.add("on")).catch(()=>{})},
+    load(){if(!order.length)return;v.src=order[i];lbl.textContent=`ไฮไลท์ ${i+1}/${order.length} · คลิปเต็ม ${w.length}`;dots.forEach((d,k)=>d.classList.toggle("cur",k===i))},
+    play(){if(reduce||!order.length)return;p.wanted=true;v.play().then(()=>host.classList.add("on")).catch(()=>{})},
     pause(){v.pause()},
     stop(){p.wanted=false;v.pause()}};
   v.addEventListener("ended",()=>{i=(i+1)%order.length;p.load();if(p.wanted)v.play().catch(()=>{})});
@@ -315,36 +313,45 @@ function makePlayer(host,w){
   return p;
 }
 
-// hero + ambient glow (current frame drawn small, blurred by CSS)
-const hero=makePlayer(document.getElementById("heroPlayer"),LONG[0]);
-hero.v.preload="auto";
-const amb=document.getElementById("amb"),ctx=amb.getContext("2d");
-(function glow(){
-  if(hero.v.readyState>=2){try{ctx.drawImage(hero.v,0,0,amb.width,amb.height)}catch(e){}}
-  else{const im=document.querySelector("#heroPlayer img");if(im.complete&&im.naturalWidth)ctx.drawImage(im,0,0,amb.width,amb.height)}
-  if(!reduce)requestAnimationFrame(glow);
-})();
+// hero = first work, with the ambient glow (current frame drawn small, blurred by CSS)
+const slidePlayers=new Map();
+if(WORKS.length){
+  const hero=makePlayer($("heroPlayer"),WORKS[0]);
+  hero.v.preload="auto";slidePlayers.set($("s-home"),hero);
+  const amb=$("amb"),ctx=amb.getContext("2d");
+  (function glow(){
+    if(hero.v.readyState>=2){try{ctx.drawImage(hero.v,0,0,amb.width,amb.height)}catch(e){}}
+    else{const im=document.querySelector("#heroPlayer img");if(im&&im.complete&&im.naturalWidth)ctx.drawImage(im,0,0,amb.width,amb.height)}
+    if(!reduce)requestAnimationFrame(glow);
+  })();
+}
 
 // one slide per long-form work
-const slot=document.getElementById("longSlides");
-const slidePlayers=new Map([[document.getElementById("s-home"),hero]]);
-LONG.forEach((w,k)=>{
-  const s=document.createElement("section");s.className="slide";s.id="s-long-"+(k+1);s.dataset.name=w.t;
-  s.dataset.tab=w.tab;
-  s.innerHTML=`<div class="inner"><div class="title"><h2>Long-form</h2><span class="meta">${k+1} / ${LONG.length}</span></div>
-   <div class="lf"><div class="pwrap"><div></div></div><div><span class="meta">${w.type} · ${w.year}</span><h3>${w.t}</h3><p>${w.d}</p>
-   <div class="roles">${w.roles.map(r=>`<span>${r}</span>`).join("")}</div></div></div></div>`;
+const slot=$("longSlides");
+WORKS.forEach((w,k)=>{
+  const s=document.createElement("section");s.className="slide";s.id="s-long-"+(k+1);s.dataset.name=w.title;s.dataset.tab=w.tab||w.title;
+  s.innerHTML=`<div class="inner"><div class="title"><h2>Long-form</h2><span class="meta">${k+1} / ${WORKS.length}</span></div>
+   <div class="lf"><div class="pwrap"><div></div></div><div><span class="meta">${esc(w.type)} · ${esc(w.year)}</span><h3>${esc(w.title)}</h3><p>${esc(w.desc)}</p>
+   <div class="roles">${(w.roles||[]).map(r=>`<span>${esc(r)}</span>`).join("")}</div></div></div></div>`;
   slot.appendChild(s);
   slidePlayers.set(s,makePlayer(s.querySelector(".pwrap > div"),w));
 });
 
-document.getElementById("stillList").innerHTML=STILLS.map(w=>`
- <figure class="st${w.wide?" wide":""}"><div class="frame"><img src="${w.src}" alt="${w.t}" loading="lazy"></div><figcaption>${w.t}</figcaption></figure>`).join("");
+// short-form: vertical clips that loop while their slide is open
+const shortVideos=[];
+$("shortList").innerHTML=SHORTS.length
+  ?`<div class="shorts">${SHORTS.map(w=>`<a class="sf"${w.url?` href="${esc(w.url)}" target="_blank" rel="noopener"`:""}><span class="sfv"><video src="${esc(w.clip)}" poster="${esc(w.poster)}" muted loop playsinline preload="none"></video>${w.platform?`<span class="stat">${esc(w.platform)}</span>`:""}</span><span>${esc(w.title)}</span></a>`).join("")}</div>`
+  :`<div class="shorts-empty" aria-hidden="true"><div>9:16</div><div>9:16</div><div>9:16</div><div>9:16</div><div>9:16</div></div><p class="shorts-note">ยังไม่มีคลิปแนวตั้ง</p>`;
+document.querySelectorAll("#shortList video").forEach(v=>shortVideos.push(v));
+slidePlayers.set($("s-short"),{play(){if(!reduce)shortVideos.forEach(v=>v.play().catch(()=>{}))},stop(){shortVideos.forEach(v=>v.pause())}});
+
+$("stillList").innerHTML=STILLS.map(w=>`
+ <figure class="st${w.wide?" wide":""}"><div class="frame"><img src="${esc(w.src)}" alt="${esc(w.title)}" loading="lazy"></div><figcaption>${esc(w.title)}</figcaption></figure>`).join("");
 
 // one screen: only the current slide is shown; menu, arrows, keys, wheel and swipe swap it
 const slides=[...document.querySelectorAll(".slide")];
-const tabs=document.getElementById("tabs"),prevBtn=document.getElementById("prevBtn"),nextBtn=document.getElementById("nextBtn");
-tabs.innerHTML=slides.map((s,k)=>`<button type="button" data-k="${k}"><span class="n">${String(k+1).padStart(2,"0")}</span><span class="l">${s.dataset.tab}</span></button>`).join("");
+const tabs=$("tabs"),prevBtn=$("prevBtn"),nextBtn=$("nextBtn");
+tabs.innerHTML=slides.map((s,k)=>`<button type="button" data-k="${k}"><span class="n">${String(k+1).padStart(2,"0")}</span><span class="l">${esc(s.dataset.tab)}</span></button>`).join("");
 let cur=-1,lock=false;
 function goTo(n){
   n=Math.max(0,Math.min(slides.length-1,n));if(n===cur)return;
@@ -384,14 +391,14 @@ const start=slides.findIndex(s=>"#"+s.id===location.hash);
 goTo(start<0?0:start);
 
 // resume: hover the face (desktop) or tap it (touch); tapping elsewhere closes
-const av=document.getElementById("avatar"),rs=document.getElementById("resume"),me=av.parentElement;
+const av=$("avatar"),rs=$("resume"),me=av.parentElement;
 function showRs(o){rs.hidden=!o;av.setAttribute("aria-expanded",String(o))}
 if(!touch){me.addEventListener("mouseenter",()=>showRs(true));me.addEventListener("mouseleave",()=>showRs(false))}
 av.addEventListener("click",e=>{e.stopPropagation();showRs(rs.hidden)});
 document.addEventListener("click",e=>{if(!me.contains(e.target))showRs(false)});
 
-document.getElementById("copy").addEventListener("click",async e=>{
-  const el=document.getElementById("mail");
+$("copy").addEventListener("click",async e=>{
+  const el=$("mail");
   try{await navigator.clipboard.writeText(el.textContent);e.target.textContent="คัดลอกแล้ว"}
   catch(err){const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);e.target.textContent="กด Ctrl+C เพื่อคัดลอก"}
 });
