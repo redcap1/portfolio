@@ -126,13 +126,69 @@ def rel(p):
     return os.path.relpath(p, ROOT).replace("\\", "/")
 
 
+IMAGE_EXT = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
+
+
+def img_size(path):
+    out = run([FFPROBE, "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "json", path]).stdout
+    st = json.loads(out)["streams"][0]
+    return int(st["width"]), int(st["height"])
+
+
+def add_graphic_image(src, ext, slug, c):
+    w, h = img_size(src)
+    title = ask("ชื่อผลงานกราฟิก")
+    out = os.path.join(MEDIA, slug + ext)
+    if ext in (".gif", ".webp"):
+        shutil.copyfile(src, out)          # animated files are copied as-is so the animation is kept
+        if os.path.getsize(out) > 8_000_000:
+            print("คำเตือน: ไฟล์ใหญ่กว่า 8 MB เว็บจะโหลดช้า — ถ้าทำได้ส่งออกเป็น MP4 แล้วเลือกข้อ 3 จะเล็กกว่ามาก")
+    else:
+        out = os.path.join(MEDIA, slug + ".jpg")
+        run([FFMPEG, "-v", "error", "-i", src, "-vf", "scale='min(1800,iw)':-2", "-q:v", "3", "-y", out])
+    c.setdefault("graphics", []).append({"title": title, "src": rel(out), "ratio": f"{w}/{h}"})
+    save_content(c)
+    print("เพิ่มลงหน้า กราฟิก & โมชั่น แล้ว")
+    git_publish(f"Add graphic: {title}")
+
+
+def add_motion(src, dur, w, h, slug, c):
+    title = ask("ชื่อผลงานโมชั่น")
+    start = parse_time(ask("เริ่มที่วินาที", "0"))
+    length = min(15, dur - start)
+    out, poster = os.path.join(MEDIA, slug + ".mp4"), os.path.join(MEDIA, slug + "-poster.jpg")
+    print("กำลังแปลงไฟล์...")
+    scale = "scale=-2:720" if h > w else "scale=960:-2"
+    run([FFMPEG, "-v", "error", "-ss", str(start), "-t", str(length), "-i", src, "-an", "-vf", scale + ",fps=30",
+         "-c:v", "libx264", "-preset", "slow", "-crf", "26", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-y", out])
+    grab(src, start + length / 2, poster, vertical=h > w)
+    c.setdefault("graphics", []).append({"title": title, "src": rel(out), "poster": rel(poster), "ratio": f"{w}/{h}"})
+    save_content(c)
+    print("เพิ่มลงหน้า กราฟิก & โมชั่น แล้ว (เล่นวนแบบไม่มีเสียง สูงสุด 15 วินาที)")
+    git_publish(f"Add motion: {title}")
+
+
+def set_showreel(src, dur, c):
+    out, poster = os.path.join(MEDIA, "showreel.mp4"), os.path.join(MEDIA, "showreel-poster.jpg")
+    print("กำลังแปลง Showreel ให้เหมาะกับเว็บ...")
+    run([FFMPEG, "-v", "error", "-i", src, "-vf", "scale=1280:-2", "-c:v", "libx264", "-preset", "slow", "-crf", "25",
+         "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", "-y", out])
+    grab(src, min(1.2, dur / 2), poster)
+    reel = c.get("showreel") or {}
+    reel.update({"title": ask("ชื่อ Showreel", reel.get("title", "Showreel")), "src": rel(out), "poster": rel(poster), "length": fmt_len(dur)})
+    c["showreel"] = reel
+    save_content(c)
+    print(f"เปลี่ยน Showreel แล้ว ({os.path.getsize(out) // 1_000_000} MB)")
+    git_publish("Update showreel")
+
+
 def choose_file():
     try:
         import tkinter as tk
         from tkinter import filedialog
         r = tk.Tk(); r.withdraw(); r.attributes("-topmost", True)
-        p = filedialog.askopenfilename(title="เลือกไฟล์วิดีโอที่จะเพิ่มลงพอร์ต",
-                                       filetypes=[("Video", "*.mp4 *.mov *.mkv *.m4v *.webm"), ("All", "*.*")])
+        p = filedialog.askopenfilename(title="เลือกไฟล์วิดีโอหรือรูปที่จะเพิ่มลงพอร์ต",
+                                       filetypes=[("Video / Image", "*.mp4 *.mov *.mkv *.m4v *.webm *.jpg *.jpeg *.png *.gif *.webp"), ("All", "*.*")])
         r.destroy()
         return p
     except Exception:
@@ -158,11 +214,21 @@ def main():
     src = choose_file()
     if not src or not os.path.exists(src):
         sys.exit("ไม่ได้เลือกไฟล์")
-    dur, w, h = probe(src)
-    vertical = h > w
-    print(f"ไฟล์: {os.path.basename(src)} · ยาว {fmt_len(dur)} · {w}x{h} · {'แนวตั้ง (ใส่ในหน้า Short-form)' if vertical else 'แนวนอน (ใส่ในหน้า Long-form)'}")
+    ext = os.path.splitext(src)[1].lower()
     slug = "w" + time.strftime("%y%m%d%H%M%S")
     c = load_content()
+    if ext in IMAGE_EXT:
+        return add_graphic_image(src, ext, slug, c)
+    dur, w, h = probe(src)
+    vertical = h > w
+    print(f"ไฟล์: {os.path.basename(src)} · ยาว {fmt_len(dur)} · {w}x{h}")
+    print("จะใส่ในหน้าไหน?\n  1 = Long-form (งานยาว)\n  2 = Short-form (คลิปแนวตั้ง)\n  3 = กราฟิก & โมชั่น (คลิปโมชั่นสั้นๆ เล่นวน)\n  4 = Showreel (แทนคลิปหน้าแรก)")
+    choice = ask("เลือก 1-4", "2" if vertical else ("3" if dur <= 20 else "1"))
+    if choice == "3":
+        return add_motion(src, dur, w, h, slug, c)
+    if choice == "4":
+        return set_showreel(src, dur, c)
+    vertical = choice == "2"
 
     if vertical:
         title = ask("ชื่อคลิป")

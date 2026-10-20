@@ -100,6 +100,21 @@ header > *{pointer-events:auto}
 .hero-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
 
 /* long-form slide */
+/* long-form: one slide, pick a work from the list */
+.wlist{display:grid;gap:6px;margin-top:18px}
+.wlist button{font:inherit;text-align:left;display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:baseline;padding:8px 0;border:0;border-top:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.wlist button .n{font-family:var(--mono);font-size:11px}
+.wlist button .t{font-weight:600;font-size:15px}
+.wlist button .d{font-family:var(--mono);font-size:11px}
+.wlist button:hover,.wlist button[aria-current="true"]{color:var(--fg)}
+.wlist button[aria-current="true"] .t{text-decoration:underline;text-underline-offset:4px}
+.player.reel .dots{display:none}
+/* graphics & motion grid: images, GIF/WebP and short looping videos */
+.gfx{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;width:min(100%,calc((100dvh - 330px)*2.2))}
+.gi{margin:0;display:grid;gap:6px;min-width:0}
+.gi .frame{position:relative;aspect-ratio:var(--ar,4/3);overflow:hidden;background:var(--frame);border-radius:4px}
+.gi img,.gi video{position:absolute;inset:0;width:100%;height:100%;object-fit:var(--fit,cover)}
+.gi .badge{position:absolute;left:8px;top:8px;color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.08em;background:rgba(0,0,0,.5);padding:1px 6px;border-radius:3px}
 .lf{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:32px;align-items:end}
 .lf .pwrap{width:min(100%,calc((100dvh - 360px)*16/9))}
 .lf h3{font-size:clamp(22px,2.4vw,30px);font-weight:600;line-height:1.25;margin:4px 0 6px}
@@ -194,7 +209,7 @@ figcaption{font-size:13px;color:var(--muted)}
 <nav class="bar-nav" aria-label="เมนู"><button class="arrow" id="prevBtn" type="button" aria-label="ก่อนหน้า">←</button><div class="tabs" id="tabs"></div><button class="arrow" id="nextBtn" type="button" aria-label="ถัดไป">→</button></nav>
 
 <main class="deck" id="deck">
-  <section class="slide hero" id="s-home" data-name="หน้าแรก" data-tab="หน้าแรก">
+  <section class="slide hero" id="s-home" data-name="Showreel" data-tab="Showreel">
     <div class="inner">
       <h1 id="pHeadline"></h1>
       <div class="stage"><canvas id="amb" width="64" height="36" aria-hidden="true"></canvas><div id="heroPlayer"></div></div>
@@ -202,8 +217,13 @@ figcaption{font-size:13px;color:var(--muted)}
     </div>
   </section>
 
-  <!-- long-form slides are inserted here by script -->
-  <div id="longSlides" style="display:contents"></div>
+  <section class="slide" id="s-long" data-name="Long-form" data-tab="Long-form">
+    <div class="inner">
+      <div class="title"><h2 id="tLong"></h2><span class="meta" id="tLongNote"></span></div>
+      <div class="lf"><div class="pwrap"><div id="longPlayer"></div></div>
+        <div><div id="longInfo"></div><div class="wlist" id="workList"></div></div></div>
+    </div>
+  </section>
 
   <section class="slide" id="s-short" data-name="Short-form" data-tab="Short-form">
     <div class="inner">
@@ -216,6 +236,13 @@ figcaption{font-size:13px;color:var(--muted)}
     <div class="inner">
       <div class="title"><h2 id="tStills"></h2><span class="meta" id="stillsNote"></span></div>
       <div class="stills" id="stillList"></div>
+    </div>
+  </section>
+
+  <section class="slide" id="s-graphics" data-name="Graphics" data-tab="Graphics">
+    <div class="inner">
+      <div class="title"><h2 id="tGfx"></h2><span class="meta" id="tGfxNote"></span></div>
+      <div id="gfxList"></div>
     </div>
   </section>
 
@@ -277,11 +304,11 @@ $("pHeroL").textContent=P.heroLeft||"";$("pHeroR").textContent=P.heroRight||"";
 $("pAbout").textContent=P.about||"";$("pClients").textContent=P.clients||"";
 $("mail").textContent=P.email||"";$("pLine").textContent=P.line||"";if(!P.line)$("lineRow").hidden=true;
 // section titles and menu names (editable in content.js → "sections")
-const T=Object.assign({topLabel:"Video Editor Portfolio",home:"หน้าแรก",long:"Long-form",short:"Short-form",shortNote:"9:16 · Reels / TikTok / Shorts",stills:"Stills",contact:"Contact",contactNote:"รับงานใหม่",tabShort:"Short-form",tabStills:"Stills",tabContact:"ติดต่อ"},C.sections||{});
+const T=Object.assign({topLabel:"Video Editor Portfolio",tabShowreel:"Showreel",long:"Long-form",longNote:"เลือกงานจากรายการ",tabLong:"Long-form",short:"Short-form",shortNote:"9:16 · Reels / TikTok / Shorts",tabShort:"Short-form",stills:"ภาพนิ่ง",stillsNote:"",tabStills:"ภาพนิ่ง",graphics:"Graphics & Motion",graphicsNote:"กราฟิก · โมชั่น",tabGraphics:"กราฟิก & โมชั่น",contact:"Contact",contactNote:"รับงานใหม่",tabContact:"ติดต่อ"},C.sections||{});
 $("pTopLabel").textContent=T.topLabel;
 $("tShort").textContent=T.short;$("tShortNote").textContent=T.shortNote;$("tStills").textContent=T.stills;
 $("tContact").textContent=T.contact;$("tContactNote").textContent=T.contactNote;
-$("s-home").dataset.tab=T.home;$("s-short").dataset.tab=T.tabShort;$("s-stills").dataset.tab=T.tabStills;$("s-contact").dataset.tab=T.tabContact;
+$("s-home").dataset.tab=T.tabShowreel;$("s-long").dataset.tab=T.tabLong;$("s-graphics").dataset.tab=T.tabGraphics;$("tLong").textContent=T.long;$("tLongNote").textContent=T.longNote;$("tGfx").textContent=T.graphics;$("tGfxNote").textContent=T.graphicsNote;$("s-short").dataset.tab=T.tabShort;$("s-stills").dataset.tab=T.tabStills;$("s-contact").dataset.tab=T.tabContact;
 // theme: content.js "theme" is the default; the button remembers the viewer's choice
 const rootEl=document.documentElement;
 let theme=(()=>{try{return localStorage.getItem("theme")}catch(e){return null}})()||C.theme||"dark";
@@ -290,7 +317,7 @@ $("themeBtn").onclick=()=>{theme=theme==="dark"?"light":"dark";try{localStorage.
 applyTheme();
 $("pLinks").innerHTML=(P.links||[]).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join("");
 $("pCopy").textContent="© "+new Date().getFullYear()+" "+(P.name||"");
-$("stillsNote").textContent=C.stillsNote||"";
+$("stillsNote").textContent=C.stillsNote||T.stillsNote||"";
 $("avatar").innerHTML=P.photo?`<img src="${esc(P.photo)}" alt="">`:`<span>${esc((P.nameTh||P.name||"?").slice(0,3))}</span>`;
 $("resume").innerHTML=P.resume?`<img src="${esc(P.resume)}" alt="Resume">`:`<div class="resume-ph"><b>Resume</b><span>ยังไม่ได้ใส่ไฟล์ resume ใน content.js</span></div>`;
 if(!P.resume&&!P.photo)$("pHint").hidden=true;
@@ -322,29 +349,32 @@ $("mClose").onclick=closeModal;$("tvClose").onclick=closeModal;$("mGo").onclick=
 modal.addEventListener("click",e=>{if(e.target===modal)closeModal()});
 
 // highlight player: plays the work's clips in a random order, never the full video
-function makePlayer(host,w){
-  const order=shuffle(w.clips||[]);let i=0;
-  host.className="player";
+function makePlayer(host,w,reel){
+  const order=reel?[w.src]:shuffle(w.clips||[]);let i=0;
+  host.className="player"+(reel?" reel":"");
   host.innerHTML=`<img src="${esc(w.poster)}" alt=""><video muted playsinline preload="none"></video>
    <div class="bar"><div class="info"><span class="lbl"></span><div class="dots">${order.map(()=>"<i></i>").join("")}</div></div>
-   <div class="ctrls"><button class="pbtn snd" type="button" aria-pressed="false">เปิดเสียง</button><button class="pbtn full" type="button">ดูคลิปเต็ม</button></div></div>`;
+   <div class="ctrls"><button class="pbtn snd" type="button" aria-pressed="false">เปิดเสียง</button><button class="pbtn full" type="button">${reel?"เต็มจอ":"ดูคลิปเต็ม"}</button></div></div>`;
   const v=host.querySelector("video"),lbl=host.querySelector(".lbl"),dots=host.querySelectorAll(".dots i"),snd=host.querySelector(".snd");
   const p={v,wanted:false,
-    load(){if(!order.length)return;v.src=order[i];lbl.textContent=`ไฮไลท์ ${i+1}/${order.length} · คลิปเต็ม ${w.length}`;dots.forEach((d,k)=>d.classList.toggle("cur",k===i))},
+    load(){if(!order.length)return;v.src=order[i];lbl.textContent=reel?`${w.title||"Showreel"} · ${w.length||""}`:`ไฮไลท์ ${i+1}/${order.length} · คลิปเต็ม ${w.length}`;dots.forEach((d,k)=>d.classList.toggle("cur",k===i))},
     play(){if(reduce||!order.length)return;p.wanted=true;v.play().then(()=>host.classList.add("on")).catch(()=>{})},
     pause(){v.pause()},
     stop(){p.wanted=false;v.pause()}};
   v.addEventListener("ended",()=>{i=(i+1)%order.length;p.load();if(p.wanted)v.play().catch(()=>{})});
   snd.onclick=()=>{v.muted=!v.muted;snd.textContent=v.muted?"เปิดเสียง":"ปิดเสียง";snd.setAttribute("aria-pressed",String(!v.muted));if(!v.muted)p.play()};
-  host.querySelector(".full").onclick=()=>askFull(w,p);
+  host.querySelector(".full").onclick=()=>{if(!reel)return askFull(w,p);(v.requestFullscreen||v.webkitRequestFullscreen||(()=>{})).call(v);v.muted=false;snd.textContent="ปิดเสียง";p.play()};
+  if(reel)v.loop=true;
   p.load();players.push(p);
+  p.destroy=()=>{p.stop();v.removeAttribute("src");v.load();const k=players.indexOf(p);if(k>=0)players.splice(k,1)};
   return p;
 }
 
-// hero = first work, with the ambient glow (current frame drawn small, blurred by CSS)
+// hero = showreel (falls back to the first work), with the ambient glow (current frame drawn small, blurred by CSS)
 const slidePlayers=new Map();
-if(WORKS.length){
-  const hero=makePlayer($("heroPlayer"),WORKS[0]);
+const REEL=C.showreel&&C.showreel.src?C.showreel:null;
+if(REEL||WORKS.length){
+  const hero=REEL?makePlayer($("heroPlayer"),REEL,true):makePlayer($("heroPlayer"),WORKS[0]);
   hero.v.preload="auto";slidePlayers.set($("s-home"),hero);
   const amb=$("amb"),ctx=amb.getContext("2d");
   (function glow(){
@@ -354,16 +384,21 @@ if(WORKS.length){
   })();
 }
 
-// one slide per long-form work
-const slot=$("longSlides");
-WORKS.forEach((w,k)=>{
-  const s=document.createElement("section");s.className="slide";s.id="s-long-"+(k+1);s.dataset.name=w.title;s.dataset.tab=w.tab||w.title;
-  s.innerHTML=`<div class="inner"><div class="title"><h2>${esc(T.long)}</h2><span class="meta">${k+1} / ${WORKS.length}</span></div>
-   <div class="lf"><div class="pwrap"><div></div></div><div><span class="meta">${esc(w.type)} · ${esc(w.year)}</span><h3>${esc(w.title)}</h3><p>${esc(w.desc)}</p>
-   <div class="roles">${(w.roles||[]).map(r=>`<span>${esc(r)}</span>`).join("")}</div></div></div></div>`;
-  slot.appendChild(s);
-  slidePlayers.set(s,makePlayer(s.querySelector(".pwrap > div"),w));
-});
+// long-form: one slide; the list beside the player switches which work is showing
+let longP=null;
+function showWork(k){
+  const w=WORKS[k];if(!w)return;
+  const wasOn=longP&&longP.wanted;if(longP)longP.destroy();
+  longP=makePlayer($("longPlayer"),w);
+  $("longInfo").innerHTML=`<span class="meta">${esc(w.type)} · ${esc(w.year)}</span><h3>${esc(w.title)}</h3><p>${esc(w.desc)}</p>
+   <div class="roles">${(w.roles||[]).map(r=>`<span>${esc(r)}</span>`).join("")}</div>`;
+  [...$("workList").children].forEach((b,i)=>b.setAttribute("aria-current",String(i===k)));
+  if(wasOn)longP.play();
+}
+$("workList").innerHTML=WORKS.map((w,k)=>`<button type="button" data-k="${k}"><span class="n">${String(k+1).padStart(2,"0")}</span><span class="t">${esc(w.tab||w.title)}</span><span class="d">${esc(w.length)}</span></button>`).join("");
+$("workList").onclick=e=>{const b=e.target.closest("button");if(b){showWork(+b.dataset.k);longP.play()}};
+if(WORKS.length)showWork(0);
+slidePlayers.set($("s-long"),{get wanted(){return !!(longP&&longP.wanted)},play(){longP&&longP.play()},stop(){longP&&longP.stop()}});
 
 // short-form: vertical clips that loop while their slide is open
 const shortVideos=[];
@@ -375,6 +410,17 @@ slidePlayers.set($("s-short"),{play(){if(!reduce)shortVideos.forEach(v=>v.play()
 
 $("stillList").innerHTML=STILLS.map(w=>`
  <figure class="st${w.wide?" wide":""}"><div class="frame"><img src="${esc(w.src)}" alt="${esc(w.title)}" loading="lazy"></div><figcaption>${esc(w.title)}</figcaption></figure>`).join("");
+
+// graphics & motion: still images, animated GIF/WebP, and short looping MP4/WebM
+const GFX=C.graphics||[],gfxVideos=[];
+const isVid=f=>/\.(mp4|webm|mov)$/i.test(f||""),isAnim=f=>/\.(gif|webp)$/i.test(f||"");
+$("gfxList").innerHTML=GFX.length
+  ?`<div class="gfx">${GFX.map(g=>`<figure class="gi"><div class="frame" style="--ar:${esc(g.ratio||"4/3")};--fit:${g.fit==="contain"?"contain":"cover"}">${isVid(g.src)
+      ?`<video src="${esc(g.src)}" poster="${esc(g.poster||"")}" muted loop playsinline preload="none"></video><span class="badge">MOTION</span>`
+      :`<img src="${esc(g.src)}" alt="${esc(g.title)}" loading="lazy">${isAnim(g.src)?'<span class="badge">ANIMATED</span>':""}`}</div><figcaption>${esc(g.title)}</figcaption></figure>`).join("")}</div>`
+  :`<p class="shorts-note">ยังไม่มีผลงานกราฟิกหรือโมชั่น — เพิ่มด้วย เพิ่มงาน.bat หรือใส่ใน content.js ส่วน "graphics"</p>`;
+document.querySelectorAll("#gfxList video").forEach(v=>gfxVideos.push(v));
+slidePlayers.set($("s-graphics"),{play(){if(!reduce)gfxVideos.forEach(v=>v.play().catch(()=>{}))},stop(){gfxVideos.forEach(v=>v.pause())}});
 
 // one screen: only the current slide is shown; menu, arrows, keys, wheel and swipe swap it
 const slides=[...document.querySelectorAll(".slide")];

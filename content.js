@@ -22,16 +22,27 @@ window.CONTENT = {
   "theme": "dark",
   "sections": {
     "topLabel": "Video Editor Portfolio",
-    "home": "หน้าแรก",
+    "tabShowreel": "Showreel",
     "long": "Long-form",
+    "longNote": "เลือกงานจากรายการ",
+    "tabLong": "Long-form",
     "short": "Short-form",
     "shortNote": "9:16 · Reels / TikTok / Shorts",
     "tabShort": "Short-form",
-    "stills": "Stills",
-    "tabStills": "Stills",
+    "stills": "ภาพนิ่ง",
+    "tabStills": "ภาพนิ่ง",
+    "graphics": "Graphics & Motion",
+    "graphicsNote": "กราฟิก · โมชั่น",
+    "tabGraphics": "กราฟิก & โมชั่น",
     "contact": "Contact",
     "contactNote": "รับงานใหม่",
     "tabContact": "ติดต่อ"
+  },
+  "showreel": {
+    "title": "Showreel 2026",
+    "src": "media/showreel.mp4",
+    "poster": "media/showreel-poster.jpg",
+    "length": "1:00"
   },
   "youtubeFallback": "https://www.youtube.com/results?search_query=voicezan",
   "works": [
@@ -137,5 +148,6 @@ window.CONTENT = {
       "title": "มื้อแรกที่ปูซาน",
       "src": "media/st-soup.jpg"
     }
-  ]
+  ],
+  "graphics": []
 };
