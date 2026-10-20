@@ -10,7 +10,7 @@ window.CONTENT = {
     "clients": "ร่วมงานกับ — VOICEZAN",
     "email": "gfoibomin2010@hotmail.com",
     "line": "@detnarink",
-    "photo": "",
+    "photo": "media/me.jpg",
     "resume": "",
     "links": [
       {
@@ -18,6 +18,20 @@ window.CONTENT = {
         "url": "https://www.youtube.com/results?search_query=voicezan"
       }
     ]
+  },
+  "theme": "dark",
+  "sections": {
+    "topLabel": "Video Editor Portfolio",
+    "home": "หน้าแรก",
+    "long": "Long-form",
+    "short": "Short-form",
+    "shortNote": "9:16 · Reels / TikTok / Shorts",
+    "tabShort": "Short-form",
+    "stills": "Stills",
+    "tabStills": "Stills",
+    "contact": "Contact",
+    "contactNote": "รับงานใหม่",
+    "tabContact": "ติดต่อ"
   },
   "youtubeFallback": "https://www.youtube.com/results?search_query=voicezan",
   "works": [
