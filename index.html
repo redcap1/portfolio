@@ -467,7 +467,7 @@ deck.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-sx,dy=
   if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)step(dx<0?1:-1)},{passive:true});
 addEventListener("keydown",e=>{
   if(e.key==="Escape"){if(!modal.hidden)closeModal();showRs(false);return}
-  if(!modal.hidden||e.target.closest("input,textarea"))return;
+  if(!modal.hidden||e.target.closest("input,textarea,[contenteditable]"))return;
   const d={ArrowRight:1,ArrowDown:1,PageDown:1,ArrowLeft:-1,ArrowUp:-1,PageUp:-1}[e.key];if(!d)return;
   e.preventDefault();step(d);
 });
@@ -491,6 +491,9 @@ $("copy").addEventListener("click",async e=>{
   try{await navigator.clipboard.writeText(el.textContent);e.target.textContent="คัดลอกแล้ว"}
   catch(err){const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);e.target.textContent="กด Ctrl+C เพื่อคัดลอก"}
 });
+
+// edit mode: opened by แก้เว็บ.bat on this computer only, never on the public site
+if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)&&/[?&]edit/.test(location.search)){const s=document.createElement("script");s.src="tools/editor.js";document.body.appendChild(s)}
 </script>
 </body>
 </html>
