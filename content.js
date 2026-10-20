@@ -3,7 +3,7 @@ window.CONTENT = {
     "name": "Detnarin Klodklang",
     "nameTh": "เดชนรินทร์ คลอดกลาง",
     "role": "Video Editor",
-    "headline": "ตัดต่อ Vlog และคลิปเกม ให้ดูจนจบ",
+    "headline": "SHOWREEL",
     "heroLeft": "Video Editor — Bangkok",
     "heroRight": "Vlog · Gaming · Sponsor Integration",
     "about": "ตัดต่อ Vlog ท่องเที่ยวและคลิปเกมแบบยาว ทำซับไตเติล กราฟิก และวางโฆษณาสปอนเซอร์ให้เนียนไปกับเนื้อหา ใช้ Premiere Pro และ DaVinci Resolve",
