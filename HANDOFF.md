@@ -21,7 +21,8 @@
 - `content.js` — **ข้อมูลทั้งหมด** (`window.CONTENT = {...};` เป็น JSON ล้วนหลัง prefix): profile, theme, sections (ชื่อหัวข้อ/เมนู), showreel, works, shorts, stills, graphics
 - `index.html` — โค้ด/ดีไซน์ (ไม่ต้องให้ผู้ใช้แก้)
 - `tools/add_work.py` + `เพิ่มงาน.bat` — เพิ่มงานเอง: รูป/GIF→กราฟิก, วิดีโอ→เลือก Long/Short/โมชั่น/Showreel, หาไฮไลท์อัตโนมัติ (RMS เสียง + scene cut), เขียน content.js, git push
-- `แก้เว็บ.bat` → `tools/editor_server.py` (http.server 127.0.0.1:8765+, เปิด `/?edit`, POST `/save` เขียน content.js + `.bak`, POST `/publish` git push) + `tools/editor.js` (โหลดเฉพาะ localhost + `?edit`; ข้อความ = contenteditable ตาม map id→path ใน content.js, ข้อความในปุ่ม (เมนู/รายการงาน) = ดับเบิลคลิก → prompt) — **ทิศทางที่ผู้ใช้ต้องการ: แก้ทุกอย่างบนหน้าเว็บเอง** ขั้นต่อไป: เปลี่ยนวิดีโอ/รูป และลิงก์ในโหมดนี้
+- `แก้เว็บ.bat` → `tools/editor_server.py` (http.server 127.0.0.1:8765+, เปิด `/?edit`, POST `/save` เขียน content.js + `.bak`, POST `/media` {op,index,file?,t?,times?} เปิด tkinter file dialog บนเครื่อง (ไม่อัปโหลด) แล้วใช้ ffmpeg helper จาก `add_work.py` — ops: photo, resume, showreel, work/addwork (ถาม times), poster, short/addshort (ถาม t), still/addstill (วิดีโอ→ถาม t), graphic/addgraphic; ไฟล์เก่าที่ไม่มีใครอ้างถึงถูกลบ (`drop_unused`), POST `/publish` git push) + `tools/editor.js` (โหลดเฉพาะ localhost + `?edit`; ข้อความ = contenteditable ตาม map id→path, ข้อความในปุ่ม/meta/roles = ดับเบิลคลิก → prompt, ปุ่ม `.edt` ลอยบนสื่อ, ปุ่ม `.ed-add` เพิ่มรายการ, ลิงก์ติดต่อ = คลิก → prompt; การเปลี่ยนโครงสร้าง = save แล้ว reload, จำงาน Long-form ที่เปิดอยู่ใน sessionStorage) — **ทิศทางที่ผู้ใช้ต้องการ: แก้ทุกอย่างบนหน้าเว็บเอง**
+- ฟอนต์: **Prompt** (Google Fonts, OFL ใช้เชิงพาณิชย์ได้) ทั้งเว็บ — ผู้ใช้เลือกเอง; `--muted` เข้มขึ้น, ตัวเล็กสุด ~12.5px
 - `อัปเดตเว็บ.bat` — git add/commit/push
 - `วิธีอัปเดตเว็บ.md` — คู่มือภาษาไทยสำหรับผู้ใช้ (อัปเดตทุกครั้งที่เพิ่มฟีเจอร์)
 - `media/` — คลิปไฮไลท์ bh*/mh*/th*, posters, stills, showreel.mp4 (14 MB), me.jpg (รูปตัวอย่าง)
@@ -36,7 +37,7 @@
 1. ลิงก์ YouTube (Unlisted, เปิด embed) ของ 3 งาน → ใส่ `yt` ใน content.js
 2. คลิปแนวตั้ง (Short-form ยังว่าง), ผลงานกราฟิก/โมชั่น (ยังว่าง)
 3. Resume รูปภาพสำหรับ popover บนเว็บ (`profile.resume`) — ต้องเป็นเวอร์ชันไม่มีเบอร์โทร
-4. โหมดแก้ไข: ยังแก้ได้แค่ข้อความ — ต่อไปต้องเปลี่ยนวิดีโอ/รูป/ลิงก์ (YouTube, links) ได้บนหน้าเว็บ (เช็ก 1366x768 แล้ว 2026-10-20: ทุกหน้าพอดี ขอบ 46px เท่ากัน)
+4. โหมดแก้ไข: ยังไม่มีการเรียงลำดับงานใหม่ (ต้องแก้ใน content.js); file dialog ทดสอบผ่าน `file` param เท่านั้น ยังไม่ได้ลองกดจริงบนเดสก์ท็อป (เช็ก 1366x768 หลังเปลี่ยนเป็น Prompt แล้ว: ทุกหน้าพอดี ขอบ 46px)
 5. ภาพนิ่งบางรูปและช่วงไฮไลท์เลือกจากภาพ+เสียง ไม่ได้ฟังบทพูด — ผู้ใช้อาจอยากเปลี่ยน
 
 ## ความชอบของผู้ใช้
