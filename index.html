@@ -14,7 +14,10 @@
   --display:"Archivo","IBM Plex Sans Thai",system-ui,sans-serif;
   --body:"IBM Plex Sans Thai",system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
-  --top:84px;
+  --pad:clamp(24px,3.4vw,52px); --head:72px; --nav:72px; --maxw:1480px;
+  --side:max(var(--pad),calc((100vw - var(--maxw))/2));
+  --avail:calc(100dvh - var(--top) - var(--pad) - var(--nav) - 12px);
+  --top:calc(var(--pad) + var(--head) + 12px);
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0f10;--fg:#ededec;--muted:#8d9096;--line:#25272a;--frame:#1c1e21;--accent:#ff6a52;--amb:.6;color-scheme:dark}}
@@ -32,17 +35,17 @@ h1,h2,h3{margin:0;text-wrap:balance}
 /* one screen, content swaps in place */
 .deck{position:fixed;inset:0;overflow:hidden}
 .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:28px;overflow-y:auto;overflow-x:hidden;
-  padding-inline:max(20px,4vw);padding-block:var(--top) 108px;
+  padding-inline:var(--side);padding-block:var(--top) calc(var(--pad) + var(--nav) + 12px);
   opacity:0;visibility:hidden;transform:translateX(48px);transition:opacity .45s ease,transform .5s cubic-bezier(.2,.7,.2,1),visibility 0s .5s}
 .slide.prev{transform:translateX(-48px)}
 .slide.cur{opacity:1;visibility:visible;transform:none;transition:opacity .45s ease,transform .5s cubic-bezier(.2,.7,.2,1),visibility 0s}
 
 /* bottom bar: always-visible labelled menu */
 .bar-nav{position:fixed;inset:auto 0 0 0;z-index:5;display:flex;align-items:center;justify-content:center;gap:10px;
-  padding-inline:max(20px,4vw);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 16px);pointer-events:none}
+  padding-inline:var(--side);padding-bottom:calc(env(safe-area-inset-bottom,0px) + var(--pad));pointer-events:none}
 .bar-nav > *{pointer-events:auto}
 /* menu reads like the player's highlight dots: one segment per page, label under it */
-.bar-nav{background:linear-gradient(transparent,var(--bg) 45%);padding-top:28px}
+.bar-nav{background:linear-gradient(transparent,var(--bg) 40%);padding-top:36px}
 .tabs{display:flex;gap:14px;flex:1;max-width:1180px;overflow-x:auto;scrollbar-width:none}
 .tabs button{font:inherit;flex:1;min-width:max-content;display:grid;gap:8px;justify-items:start;padding:0;border:0;background:transparent;color:var(--muted);cursor:pointer;text-align:left}
 .tabs button::before{content:"";width:100%;height:3px;border-radius:2px;background:var(--line);transition:background .25s}
@@ -55,19 +58,20 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .arrow{font:inherit;font-size:20px;width:44px;height:44px;flex:none;border-radius:50%;border:1.5px solid var(--fg);background:transparent;color:var(--fg);cursor:pointer;transition:background .2s,color .2s}
 .arrow:hover:not(:disabled){background:var(--fg);color:var(--bg)}
 .arrow:disabled{opacity:.2;cursor:default}
-.inner{width:100%;max-width:1180px;margin:0 auto;display:grid;gap:28px}
+.inner{width:100%;max-width:none;margin:0;display:grid;gap:28px}
 .title{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .title h2{font-family:var(--display);font-weight:800;font-size:clamp(44px,8vw,112px);line-height:.92;letter-spacing:-.035em}
 .title .meta{font-size:13px}
 
 /* fixed header */
 header{position:fixed;inset:0 0 auto 0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:16px;
-  padding-inline:max(20px,4vw);padding-top:calc(env(safe-area-inset-top,0px) + 14px);pointer-events:none}
+  padding-inline:var(--side);padding-top:calc(env(safe-area-inset-top,0px) + var(--pad));pointer-events:none}
 header > *{pointer-events:auto}
-.name{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:-.01em}
+.name{font-family:var(--display);font-weight:800;font-size:clamp(17px,1.6vw,22px);letter-spacing:-.01em}
+.name-en{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
 .me{position:relative;display:flex;align-items:center;gap:14px}
 .who{display:grid;text-align:right;line-height:1.3}
-.avatar{width:52px;height:52px;border-radius:50%;padding:0;border:2px solid var(--fg);background:var(--frame);color:#fff;overflow:hidden;cursor:zoom-in;display:grid;place-items:center;font:inherit;font-size:13px;transition:transform .25s}
+.avatar{width:clamp(52px,4.6vw,68px);height:clamp(52px,4.6vw,68px);border-radius:50%;padding:0;border:2px solid var(--fg);background:var(--frame);color:#fff;overflow:hidden;cursor:zoom-in;display:grid;place-items:center;font:inherit;font-size:13px;transition:transform .25s}
 .avatar img{width:100%;height:100%;object-fit:cover}
 .avatar:hover,.avatar[aria-expanded="true"]{transform:scale(1.08)}
 .resume{position:absolute;right:0;top:calc(100% + 12px);width:min(440px,calc(100vw - 40px));max-height:80vh;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px;box-shadow:0 24px 70px rgba(0,0,0,.3);z-index:20;transform-origin:top right;animation:pop .22s ease-out}
@@ -94,7 +98,7 @@ header > *{pointer-events:auto}
 
 /* hero */
 .hero h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,64px);line-height:1.02;letter-spacing:-.025em;max-width:18ch}
-.stage{position:relative;width:min(100%,calc((100dvh - 390px)*16/9));min-width:min(100%,320px)}
+.stage{position:relative;width:min(100%,calc((var(--avail) - 200px)*16/9));min-width:min(100%,320px)}
 .stage canvas{position:absolute;inset:-8% -6%;width:112%;height:116%;filter:blur(70px) saturate(1.5);opacity:var(--amb);z-index:0;pointer-events:none}
 .stage .player{z-index:1}
 .hero-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
@@ -110,25 +114,25 @@ header > *{pointer-events:auto}
 .wlist button[aria-current="true"] .t{text-decoration:underline;text-underline-offset:4px}
 .player.reel .dots{display:none}
 /* graphics & motion grid: images, GIF/WebP and short looping videos */
-.gfx{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;width:min(100%,calc((100dvh - 330px)*2.2))}
+.gfx{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;width:min(100%,calc((var(--avail) - 150px)*2.2))}
 .gi{margin:0;display:grid;gap:6px;min-width:0}
 .gi .frame{position:relative;aspect-ratio:var(--ar,4/3);overflow:hidden;background:var(--frame);border-radius:4px}
 .gi img,.gi video{position:absolute;inset:0;width:100%;height:100%;object-fit:var(--fit,cover)}
 .gi .badge{position:absolute;left:8px;top:8px;color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.08em;background:rgba(0,0,0,.5);padding:1px 6px;border-radius:3px}
 .lf{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:32px;align-items:end}
-.lf .pwrap{width:min(100%,calc((100dvh - 360px)*16/9))}
+.lf .pwrap{width:min(100%,calc((var(--avail) - 150px)*16/9))}
 .lf h3{font-size:clamp(22px,2.4vw,30px);font-weight:600;line-height:1.25;margin:4px 0 6px}
 .lf p{margin:10px 0 0;color:var(--muted);font-size:15px;max-width:40ch}
 .roles{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
 .roles span{font-family:var(--mono);font-size:11px;border:1px solid var(--line);padding:2px 8px;border-radius:999px}
 
 /* shorts */
-.shorts-empty{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;width:min(100%,calc((100dvh - 380px)*2.6))}
+.shorts-empty{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;width:min(100%,calc((var(--avail) - 190px)*2.6))}
 .shorts-empty div{aspect-ratio:9/16;border:1px dashed var(--line);border-radius:2px;display:grid;place-items:center;color:var(--muted);font-family:var(--mono);font-size:11px}
 .shorts-note{margin:0;font-size:14px;color:var(--muted)}
 
 /* stills */
-.stills{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;width:min(100%,calc((100dvh - 390px)*1.7))}
+.stills{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;width:min(100%,calc((var(--avail) - 190px)*1.7))}
 .st{grid-column:span 2;display:grid;gap:6px;margin:0;min-width:0}
 .st.wide{grid-column:span 4}
 .st .frame{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--frame);border-radius:2px}
@@ -147,15 +151,18 @@ figcaption{font-size:13px;color:var(--muted)}
 .line-id{display:inline-block;background:#06C755;color:#fff;font-family:var(--display);font-weight:800;font-size:clamp(18px,2.2vw,28px);padding:2px 12px;border-radius:8px;user-select:all}
 .theme-btn{font:inherit;font-size:12px;font-family:var(--mono);letter-spacing:.06em;color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
 .theme-btn:hover{border-color:var(--fg)}
-.hleft{display:flex;align-items:center;gap:14px}
-.avatar img{object-position:50% 20%}
+.hleft{display:flex;align-items:center;gap:16px}
+.brand{display:grid;line-height:1.05}
+.brand b{font-family:var(--display);font-weight:800;font-size:clamp(20px,2.2vw,30px);letter-spacing:-.02em}
+.brand span{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-top:4px}
+.avatar img{object-position:var(--focus,50% 35%);transform:scale(var(--zoom,1.6));transform-origin:var(--focus,50% 35%)}
 .row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:14px}
 .btn{font:inherit;font-size:14px;padding:8px 16px;border:1px solid var(--fg);background:transparent;color:var(--fg);border-radius:999px;cursor:pointer}
 .btn:hover{background:var(--fg);color:var(--bg)}
 .btn.solid{background:var(--fg);color:var(--bg)}
 .links{display:flex;gap:18px;flex-wrap:wrap;margin-top:6px;font-size:14px}
 .links a{border-bottom:1px solid var(--line)} .links a:hover{border-color:var(--fg)}
-.foot{position:absolute;left:max(20px,4vw);right:max(20px,4vw);bottom:16px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.foot{position:absolute;left:var(--side);right:var(--side);bottom:calc(var(--pad) + var(--nav) + 4px);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
 
 /* confirm panel */
 .modal{position:fixed;inset:0;background:var(--scrim);display:grid;place-items:center;padding:20px;z-index:10}
@@ -170,7 +177,7 @@ figcaption{font-size:13px;color:var(--muted)}
 @media (max-width:780px){
   .big{white-space:normal;overflow-wrap:anywhere}
   .ci{grid-template-columns:1fr}.ci .acts{grid-column:1}
-  :root{--top:92px}
+  :root{--pad:20px;--head:64px;--nav:64px}
   .slide{justify-content:flex-start}
   .lf,.end{grid-template-columns:1fr;gap:20px}
   .stage,.lf .pwrap,.stills,.shorts-empty{width:100%}
@@ -187,7 +194,7 @@ figcaption{font-size:13px;color:var(--muted)}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.deck{scroll-behavior:auto}}
 /* short-form clips */
-.shorts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;width:min(100%,calc((100dvh - 380px)*2.6))}
+.shorts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;width:min(100%,calc((var(--avail) - 190px)*2.6))}
 .sf{display:grid;gap:8px;min-width:0}
 .sfv{position:relative;display:block;aspect-ratio:9/16;background:var(--frame);border-radius:4px;overflow:hidden}
 .sfv video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -198,9 +205,9 @@ figcaption{font-size:13px;color:var(--muted)}
 <body>
 
 <header>
-  <div class="hleft"><span class="meta" id="pTopLabel">Video Editor Portfolio</span><button class="theme-btn" id="themeBtn" type="button"></button></div>
+  <div class="hleft"><span class="brand"><b id="pTopLabel"></b><span id="pTopSub"></span></span><button class="theme-btn" id="themeBtn" type="button"></button></div>
   <div class="me">
-    <span class="who"><span class="name" id="pName"></span><span class="meta" id="pHint">ชี้ที่รูปเพื่อดู Resume</span></span>
+    <span class="who"><span class="name" id="pName"></span><span class="name-en" id="pNameEn"></span></span>
     <button class="avatar" id="avatar" type="button" aria-expanded="false" aria-controls="resume" aria-label="ดู Resume"></button>
     <div class="resume" id="resume" hidden></div>
   </div>
@@ -304,8 +311,8 @@ $("pHeroL").textContent=P.heroLeft||"";$("pHeroR").textContent=P.heroRight||"";
 $("pAbout").textContent=P.about||"";$("pClients").textContent=P.clients||"";
 $("mail").textContent=P.email||"";$("pLine").textContent=P.line||"";if(!P.line)$("lineRow").hidden=true;
 // section titles and menu names (editable in content.js → "sections")
-const T=Object.assign({topLabel:"Video Editor Portfolio",tabShowreel:"Showreel",long:"Long-form",longNote:"เลือกงานจากรายการ",tabLong:"Long-form",short:"Short-form",shortNote:"9:16 · Reels / TikTok / Shorts",tabShort:"Short-form",stills:"ภาพนิ่ง",stillsNote:"",tabStills:"ภาพนิ่ง",graphics:"Graphics & Motion",graphicsNote:"กราฟิก · โมชั่น",tabGraphics:"กราฟิก & โมชั่น",contact:"Contact",contactNote:"รับงานใหม่",tabContact:"ติดต่อ"},C.sections||{});
-$("pTopLabel").textContent=T.topLabel;
+const T=Object.assign({topLabel:"Video Editor",topSub:"Portfolio 2026",tabShowreel:"Showreel",long:"Long-form",longNote:"เลือกงานจากรายการ",tabLong:"Long-form",short:"Short-form",shortNote:"9:16 · Reels / TikTok / Shorts",tabShort:"Short-form",stills:"ภาพนิ่ง",stillsNote:"",tabStills:"ภาพนิ่ง",graphics:"Graphics & Motion",graphicsNote:"กราฟิก · โมชั่น",tabGraphics:"กราฟิก & โมชั่น",contact:"Contact",contactNote:"รับงานใหม่",tabContact:"ติดต่อ"},C.sections||{});
+$("pTopLabel").textContent=T.topLabel;$("pTopSub").textContent=T.topSub||"";
 $("tShort").textContent=T.short;$("tShortNote").textContent=T.shortNote;$("tStills").textContent=T.stills;
 $("tContact").textContent=T.contact;$("tContactNote").textContent=T.contactNote;
 $("s-home").dataset.tab=T.tabShowreel;$("s-long").dataset.tab=T.tabLong;$("s-graphics").dataset.tab=T.tabGraphics;$("tLong").textContent=T.long;$("tLongNote").textContent=T.longNote;$("tGfx").textContent=T.graphics;$("tGfxNote").textContent=T.graphicsNote;$("s-short").dataset.tab=T.tabShort;$("s-stills").dataset.tab=T.tabStills;$("s-contact").dataset.tab=T.tabContact;
@@ -320,7 +327,9 @@ $("pCopy").textContent="© "+new Date().getFullYear()+" "+(P.name||"");
 $("stillsNote").textContent=C.stillsNote||T.stillsNote||"";
 $("avatar").innerHTML=P.photo?`<img src="${esc(P.photo)}" alt="">`:`<span>${esc((P.nameTh||P.name||"?").slice(0,3))}</span>`;
 $("resume").innerHTML=P.resume?`<img src="${esc(P.resume)}" alt="Resume">`:`<div class="resume-ph"><b>Resume</b><span>ยังไม่ได้ใส่ไฟล์ resume ใน content.js</span></div>`;
-if(!P.resume&&!P.photo)$("pHint").hidden=true;
+$("pNameEn").textContent=P.nameTh?(P.name||""):"";
+if(P.photoFocus)$("avatar").style.setProperty("--focus",P.photoFocus);if(P.photoZoom)$("avatar").style.setProperty("--zoom",P.photoZoom);
+$("avatar").title=P.resume?"ดู Resume":"";
 
 // confirm panel, then the full video plays in-page:
 // YouTube embed when online (yt = video id) → local file (file, for the offline folder) → new tab (url) as last resort

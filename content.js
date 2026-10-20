@@ -17,11 +17,14 @@ window.CONTENT = {
         "label": "YouTube",
         "url": "https://www.youtube.com/results?search_query=voicezan"
       }
-    ]
+    ],
+    "photoFocus": "50% 38%",
+    "photoZoom": 1.6
   },
   "theme": "dark",
   "sections": {
-    "topLabel": "Video Editor Portfolio",
+    "topLabel": "Video Editor",
+    "topSub": "Portfolio · YouTube · Vlog · Gaming",
     "tabShowreel": "Showreel",
     "long": "Long-form",
     "longNote": "เลือกงานจากรายการ",
