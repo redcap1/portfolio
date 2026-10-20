@@ -37,6 +37,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:28px;overflow-y:auto;overflow-x:hidden;
   padding-inline:var(--side);padding-block:var(--top) calc(var(--pad) + var(--nav) + 12px);
   opacity:0;visibility:hidden;transform:translateX(48px);transition:opacity .45s ease,transform .5s cubic-bezier(.2,.7,.2,1),visibility 0s .5s}
+.slide{scrollbar-width:none}.slide::-webkit-scrollbar{display:none}
 .slide.prev{transform:translateX(-48px)}
 .slide.cur{opacity:1;visibility:visible;transform:none;transition:opacity .45s ease,transform .5s cubic-bezier(.2,.7,.2,1),visibility 0s}
 
@@ -98,7 +99,7 @@ header > *{pointer-events:auto}
 
 /* hero */
 .hero h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,64px);line-height:1.02;letter-spacing:-.025em;max-width:18ch}
-.stage{position:relative;width:min(100%,calc((var(--avail) - 200px)*16/9));min-width:min(100%,320px)}
+.stage{position:relative;width:min(100%,calc((var(--avail) - 215px)*16/9));min-width:min(100%,320px)}
 .stage canvas{position:absolute;inset:-8% -6%;width:112%;height:116%;filter:blur(70px) saturate(1.5);opacity:var(--amb);z-index:0;pointer-events:none}
 .stage .player{z-index:1}
 .hero-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
