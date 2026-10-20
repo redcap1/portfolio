@@ -98,11 +98,16 @@ header > *{pointer-events:auto}
 .pbtn.full{background:#fff;color:#111;border-color:#fff}
 
 /* hero */
-.hero h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,5vw,64px);line-height:1.12;letter-spacing:-.01em;max-width:18ch}
-.stage{position:relative;width:min(100%,calc((var(--avail) - 232px)*16/9));min-width:min(100%,320px)}
+/* hero: intro on the left, showreel as big as the height allows on the right */
+.hero .inner{grid-template-columns:minmax(0,1fr) min(62%,calc((var(--avail) - 8px)*16/9));gap:clamp(28px,3.5vw,56px);align-items:center}
+.intro{display:grid;gap:18px;align-content:center;position:relative;z-index:1}
+.intro .row{margin:4px 0 0}
+.intro p{margin:0;font-size:clamp(15px,1.25vw,18px);line-height:1.65;color:var(--muted);max-width:38ch}
+.hero h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,3.6vw,60px);line-height:1.12;letter-spacing:-.01em;max-width:14ch}
+.stage{position:relative;width:100%;min-width:0}
 .stage canvas{position:absolute;inset:-8% -6%;width:112%;height:116%;filter:blur(70px) saturate(1.5);opacity:var(--amb);z-index:0;pointer-events:none}
 .stage .player{z-index:1}
-.hero-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
+.hero-foot{display:grid;gap:2px;margin-top:6px}
 
 /* long-form slide */
 /* long-form: one slide, pick a work from the list */
@@ -180,14 +185,16 @@ figcaption{font-size:14px;color:var(--muted)}
   .ci{grid-template-columns:1fr}.ci .acts{grid-column:1}
   :root{--pad:20px;--head:64px;--nav:64px}
   .slide{justify-content:flex-start}
-  .lf,.end{grid-template-columns:1fr;gap:20px}
+  .lf,.end,.hero .inner{grid-template-columns:1fr;gap:20px}
   .stage,.lf .pwrap,.stills,.shorts-empty{width:100%}
   .stills{grid-template-columns:1fr 1fr}
   .st,.st.wide{grid-column:span 2}
   .shorts-empty{grid-template-columns:repeat(3,1fr)}
   .shorts-empty div:nth-child(n+4){display:none}
   .stage canvas{filter:blur(40px) saturate(1.5)}
-  .who .meta{display:none}
+  /* phone header: theme button left, name + face right (the headline already says Video Editor) */
+  .who .meta,.brand,.name-en{display:none}
+  .name{font-size:16px;white-space:nowrap}.theme-btn{white-space:nowrap}
   .tabs{gap:10px}
   .tabs button .l{font-size:14px}
   .foot{position:static;margin-top:20px}
@@ -219,9 +226,13 @@ figcaption{font-size:14px;color:var(--muted)}
 <main class="deck" id="deck">
   <section class="slide hero" id="s-home" data-name="Showreel" data-tab="Showreel">
     <div class="inner">
-      <h1 id="pHeadline"></h1>
+      <div class="intro">
+        <h1 id="pHeadline"></h1>
+        <p id="pIntro"></p>
+        <div class="row"><button class="btn solid" id="ctaWork" type="button" onclick="goTo(1)"></button><button class="btn" id="ctaContact" type="button" onclick="goTo(slides.length-1)"></button></div>
+        <div class="hero-foot meta"><span id="pHeroL"></span><span id="pHeroR"></span></div>
+      </div>
       <div class="stage"><canvas id="amb" width="64" height="36" aria-hidden="true"></canvas><div id="heroPlayer"></div></div>
-      <div class="hero-foot meta"><span id="pHeroL"></span><span id="pHeroR"></span></div>
     </div>
   </section>
 
@@ -309,10 +320,12 @@ document.title=(P.name?P.name+" — ":"")+"Video Editor";
 $("pName").textContent=P.nameTh||P.name||"";
 $("pHeadline").textContent=P.headline||"";
 $("pHeroL").textContent=P.heroLeft||"";$("pHeroR").textContent=P.heroRight||"";
+$("pIntro").textContent=P.intro||"";$("pIntro").hidden=!P.intro;
 $("pAbout").textContent=P.about||"";$("pClients").textContent=P.clients||"";
 $("mail").textContent=P.email||"";$("pLine").textContent=P.line||"";if(!P.line)$("lineRow").hidden=true;
 // section titles and menu names (editable in content.js → "sections")
-const T=Object.assign({topLabel:"Video Editor",topSub:"Portfolio 2026",tabShowreel:"Showreel",long:"Long-form",longNote:"เลือกงานจากรายการ",tabLong:"Long-form",short:"Short-form",shortNote:"9:16 · Reels / TikTok / Shorts",tabShort:"Short-form",stills:"ภาพนิ่ง",stillsNote:"",tabStills:"ภาพนิ่ง",graphics:"Graphics & Motion",graphicsNote:"กราฟิก · โมชั่น",tabGraphics:"กราฟิก & โมชั่น",contact:"Contact",contactNote:"รับงานใหม่",tabContact:"ติดต่อ"},C.sections||{});
+const T=Object.assign({topLabel:"Video Editor",topSub:"Portfolio 2026",tabShowreel:"Showreel",long:"Long-form",longNote:"เลือกงานจากรายการ",tabLong:"Long-form",short:"Short-form",shortNote:"9:16 · Reels / TikTok / Shorts",tabShort:"Short-form",stills:"ภาพนิ่ง",stillsNote:"",tabStills:"ภาพนิ่ง",graphics:"Graphics & Motion",graphicsNote:"กราฟิก · โมชั่น",tabGraphics:"กราฟิก & โมชั่น",contact:"Contact",contactNote:"รับงานใหม่",tabContact:"ติดต่อ",ctaWork:"ดูผลงาน →",ctaContact:"ติดต่องาน"},C.sections||{});
+$("ctaWork").textContent=T.ctaWork;$("ctaContact").textContent=T.ctaContact;
 $("pTopLabel").textContent=T.topLabel;$("pTopSub").textContent=T.topSub||"";
 $("tShort").textContent=T.short;$("tShortNote").textContent=T.shortNote;$("tStills").textContent=T.stills;
 $("tContact").textContent=T.contact;$("tContactNote").textContent=T.contactNote;

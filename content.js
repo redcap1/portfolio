@@ -4,6 +4,7 @@ window.CONTENT = {
     "nameTh": "เดชนรินทร์ คลอดกลาง",
     "role": "Video Editor",
     "headline": "SHOWREEL",
+    "intro": "สวัสดีครับ ผมไก่ นักตัดต่อวิดีโอที่ทำ Vlog ท่องเที่ยวและคลิปเกมแบบยาวให้ช่อง YouTube เน้นจังหวะกระชับ ซับอ่านง่าย และวางสปอนเซอร์ให้เนียนไปกับเนื้อหา",
     "heroLeft": "Video Editor — Bangkok",
     "heroRight": "Vlog · Gaming · Sponsor Integration",
     "about": "ตัดต่อ Vlog ท่องเที่ยวและคลิปเกมแบบยาว ทำซับไตเติล กราฟิก และวางโฆษณาสปอนเซอร์ให้เนียนไปกับเนื้อหา ใช้ Premiere Pro และ DaVinci Resolve",
@@ -39,7 +40,9 @@ window.CONTENT = {
     "tabGraphics": "กราฟิก & โมชั่น",
     "contact": "Contact",
     "contactNote": "รับงานใหม่",
-    "tabContact": "ติดต่อ"
+    "tabContact": "ติดต่อ",
+    "ctaWork": "ดูผลงาน →",
+    "ctaContact": "ติดต่องาน"
   },
   "showreel": {
     "title": "Showreel 2026",

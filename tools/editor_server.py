@@ -237,6 +237,8 @@ def media_paths(o):
 
 
 if __name__ == "__main__":
+    # Windows would otherwise let a second copy share the port, and the browser gets the wrong one
+    http.server.ThreadingHTTPServer.allow_reuse_address = False
     for port in range(8765, 8785):
         try:
             srv = http.server.ThreadingHTTPServer(("127.0.0.1", port), Handler)

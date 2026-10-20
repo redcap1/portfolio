@@ -13,6 +13,7 @@
 - 6 หน้า: Showreel · Long-form (หน้าเดียว มีรายการเลือกงาน) · Short-form · ภาพนิ่ง · กราฟิก & โมชั่น · ติดต่อ
 - เมนูล่างแบบเส้น+เลขหน้า, ลูกศร/ปุ่มคีย์บอร์ด/ล้อเมาส์/ปัด เปลี่ยนหน้า
 - ธีมมืดเป็นค่าเริ่มต้น + ปุ่มสลับ (จำค่าใน localStorage)
+- หน้าแรก (≥781px) = 2 คอลัมน์: ซ้าย headline + `profile.intro` + ปุ่ม `sections.ctaWork/ctaContact` + heroLeft/Right; ขวา showreel กว้าง `min(62%, (avail-8px)*16/9)` — มือถือเรียงคอลัมน์เดียว
 - Showreel มี ambient glow (canvas เบลอ) แบบ YouTube
 - Long-form เล่น "ไฮไลท์สุ่ม" 4 วิ/ช่วง; ปุ่ม "ดูคลิปเต็ม" → กล่องยืนยัน → ฝัง YouTube ในหน้า (ถ้ามี `yt`) / ไฟล์ในเครื่อง (`file`) / เปิดแท็บใหม่ (`url`, fallback = ค้นหา voicezan)
 - ระยะขอบเท่ากันทุกด้าน: ตัวแปร CSS `--pad --side --head --nav --avail`; ขนาดสื่อคำนวณจาก `--avail`

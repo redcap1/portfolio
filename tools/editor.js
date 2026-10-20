@@ -4,7 +4,7 @@
 (function(){
 const C=window.CONTENT;
 // element id → where its text lives in content.js
-const IDS={pHeadline:"profile.headline",pHeroL:"profile.heroLeft",pHeroR:"profile.heroRight",pAbout:"profile.about",pClients:"profile.clients",
+const IDS={pHeadline:"profile.headline",pIntro:"profile.intro",pHeroL:"profile.heroLeft",pHeroR:"profile.heroRight",pAbout:"profile.about",pClients:"profile.clients",
   mail:"profile.email",pLine:"profile.line",pName:C.profile.nameTh?"profile.nameTh":"profile.name",pNameEn:"profile.name",
   pTopLabel:"sections.topLabel",pTopSub:"sections.topSub",tLong:"sections.long",tLongNote:"sections.longNote",tShort:"sections.short",
   tShortNote:"sections.shortNote",tStills:"sections.stills",stillsNote:"stillsNote" in C?"stillsNote":"sections.stillsNote",
@@ -56,6 +56,7 @@ function mark(){
   document.querySelectorAll("#shortList .sfv").forEach((f,i)=>tools(f,"h"+i,[["เปลี่ยน",()=>media("short",i)],["ลิงก์",()=>editShortUrl(i)],["ลบ",()=>remove("shorts",i)]]));
   document.querySelectorAll("#tabs .l").forEach((l,i)=>promptEdit(l,"sections."+TABS[slides[i].id]));
   document.querySelectorAll("#workList .t").forEach((t,i)=>promptEdit(t,`works.${i}.tab`));
+  promptEdit(document.getElementById("ctaWork"),"sections.ctaWork");promptEdit(document.getElementById("ctaContact"),"sections.ctaContact");
   document.querySelectorAll("#pLinks a").forEach((a,i)=>{if(!a.classList.contains("ed")){a.classList.add("ed","ed-dbl");a.title="คลิกเพื่อแก้ลิงก์";a.onclick=e=>{e.preventDefault();editLink(i)}}});
   addBtn(document.getElementById("workList"),"addWork","+ เพิ่มงาน Long-form",()=>media("addwork"));
   addBtn(document.getElementById("shortList"),"addShort","+ เพิ่มคลิปแนวตั้ง",()=>media("addshort"));
